@@ -1,23 +1,39 @@
 import structurefinder.chemist_tools as ct
-from structurefinder.optimizer_modules import scipy_optimizer
+from structurefinder.optimizer_modules import Scipy_optimizer_aoenergy, Scipy_optimizer_energy
 import unittest
-import nwchemex
-import pluginplay as pp
-import simde
-import chemist
+from nwchemex import load_modules
+from pluginplay import ModuleManager
+from simde import AOEnergy, Energy, MolecularBasisSet
+from chemist import AOSpaceD, ChemicalSystem
 
-class Test_scipy_optimizer(unittest.TestCase):
+class Test_scipy_optimizer_aoenergy(unittest.TestCase):
     def setUp(self):
         self.mol = ct.get_molecule(['H', 'H'], [[0.0, 0.0, 0.0], [0.0, 0.0, 0.74]])
-        self.mm = pp.ModuleManager()
-        nwchemex.load_modules(self.mm)
-        mod_key = 'scipy_optimizer'
-        self.mm.add_module(mod_key, scipy_optimizer())
+        self.mm = ModuleManager()
+        load_modules(self.mm)
+        self.mod_key = 'scipy_optimizer_aoenergy'
+        self.mm.add_module(self.mod_key, Scipy_optimizer_aoenergy())
 
     def test_scf(self):
-        self.mm.change_submod('scipy_optimizer', 'AOEnergy', 'SCF Energy')
-        bs = self.mm.at("sto-3g").run_as(simde.MolecularBasisSet(), self.mol)
-        aos = chemist.AOSpaceD(bs)
-        cs1 = chemist.ChemicalSystem(self.mol)
-        energy = self.mm.at("scipy_optimizer").run_as(simde.AOEnergy(), aos, cs1)
+        self.mm.change_submod(self.mod_key, 'AOEnergy', 'SCF Energy')
+        bs = self.mm.at("sto-3g").run_as(MolecularBasisSet(), self.mol)
+        aos = AOSpaceD(bs)
+        chem_sys = ChemicalSystem(self.mol)
+        energy = self.mm.at(self.mod_key).run_as(AOEnergy(), aos, chem_sys)
+        self.assertAlmostEqual(energy, -1.0787343257869195, places=5)
+
+
+class Test_scipy_optimizer_energy(unittest.TestCase):
+    def setUp(self):
+        self.mol = ct.get_molecule(['H', 'H'], [[0.0, 0.0, 0.0], [0.0, 0.0, 0.74]])
+        self.mm = ModuleManager()
+        load_modules(self.mm)
+        self.mod_key = 'scipy_optimizer_energy'
+        self.mm.add_module(self.mod_key, Scipy_optimizer_energy())
+
+    def test_scf(self):
+        self.mm.change_submod(self.mod_key, 'AOEnergy', 'SCF Energy')
+        self.mm.change_submod(self.mod_key, 'MolecularBasisSet', 'sto-3g')
+        chem_sys = ChemicalSystem(self.mol)
+        energy = self.mm.at(self.mod_key).run_as(Energy(), chem_sys)
         self.assertAlmostEqual(energy, -1.0787343257869195, places=5)
