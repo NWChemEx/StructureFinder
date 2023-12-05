@@ -67,6 +67,116 @@ atomic_masses = [
     131.29   # Xenon
 ]
 
+def get_atomic_mass(x):
+    """Return the atomic mass of an element or atom.
+
+    Parameters
+    ----------
+    x : str or int
+        Element symbol or atomic number
+
+    Returns
+    -------
+    mass : float
+        Atomic mass of the atom
+    """
+    mass = 0.0
+    if type(x) == str:
+        atomic_number = get_atomic_number(x)
+        mass = atomic_masses[atomic_number]
+    elif type(x) == int:
+        mass = atomic_masses[x]
+    else:
+        print("Error: Invalid input type")
+    return mass
+
+
+def get_atomic_number(symbol):
+    """Return the atomic number for a given element symbol.
+
+    Parameters
+    ----------
+    symbol : str
+        Element symbol (case insensitive)
+    
+    Returns
+    -------
+    atomic_number : int
+        Atomic number of the element
+    >>> print(get_atomic_number('H'))
+    1
+    """
+    symbol = symbol.capitalize()
+    return element_symbols.index(symbol)
+
+
+def get_molecule(symbols, coordinates):
+    """Return a chemist.Molecule object from a list of symbols and coordinates.
+
+    Parameters
+    ----------
+    symbols : list of str
+        List of element symbols
+    coordinates : list of lists of floats
+        List of lists containing the coordinates of the atoms in the molecule.
+        The inner lists contain the x, y, and z coordinates of each atom.
+
+    Returns
+    -------
+    mol : chemist.Molecule
+        chemist.Molecule object
+    """
+    natom = len(symbols)
+    mol = chemist.Molecule()
+    if type(coordinates[0]) == list or str(type(coordinates[0])).startswith('numpy'):
+        coordinates = list(itertools.chain(*coordinates))
+    for i in range(natom):
+        x, y, z = [float(x) for x in coordinates[3 * i:3 * i + 3]]
+        symbol = symbols[i]
+        atomic_number = get_atomic_number(symbol)
+        mass = get_atomic_mass(atomic_number)
+        atom = chemist.Atom(symbol, atomic_number, mass, x, y, z)
+        mol.push_back(atom)
+    return mol
+
+
+def get_molecule_coordinates(mol):
+    """Return the coordinates of a molecule as a list of lists.
+
+    Parameters
+    ----------
+    mol : chemist.Molecule
+        chemist.Molecule object
+
+    Returns
+    -------
+    coordinates : list of lists
+        List of lists containing the coordinates of the atoms in the molecule.
+        The inner lists contain the x, y, and z coordinates of each atom.
+    """
+    return [[mol.at(i).x, mol.at(i).y, mol.at(i).z] for i in range(mol.size())]
+
+
+def get_molecule_symbols(mol):
+    """Return the symbols of a molecule as a list.
+
+    Parameters
+    ----------
+    mol : chemist.Molecule
+        chemist.Molecule object
+    
+    Returns
+    -------
+    symbols : list of str
+        List of element symbols of the atoms in the molecule.
+    """
+    natom = mol.size()
+    symbols = []
+    for i in range(natom):
+        symbols.append(get_symbol(mol.at(i).Z))
+    return symbols
+
+
 def get_periodic_table():
     """Return the periodic table as a list.
     Returns
@@ -101,109 +211,3 @@ def get_symbol(atomic_number):
     """
     return element_symbols[atomic_number]
 
-
-def get_atomic_number(symbol):
-    """Return the atomic number for a given element symbol.
-
-    Parameters
-    ----------
-    symbol : str
-        Element symbol (case insensitive)
-    
-    Returns
-    -------
-    atomic_number : int
-        Atomic number of the element
-    >>> print(get_atomic_number('H'))
-    1
-    """
-    symbol = symbol.capitalize()
-    return element_symbols.index(symbol)
-
-
-def get_coordinates(mol):
-    """Return the coordinates of a molecule as a list of lists.
-
-    Parameters
-    ----------
-    mol : chemist.Molecule
-        chemist.Molecule object
-
-    Returns
-    -------
-    coordinates : list of lists
-        List of lists containing the coordinates of the atoms in the molecule.
-        The inner lists contain the x, y, and z coordinates of each atom.
-    """
-    return [[mol.at(i).x, mol.at(i).y, mol.at(i).z] for i in range(mol.size())]
-
-def get_symbols(mol):
-    """Return the symbols of a molecule as a list.
-
-    Parameters
-    ----------
-    mol : chemist.Molecule
-        chemist.Molecule object
-    
-    Returns
-    -------
-    symbols : list of str
-        List of element symbols of the atoms in the molecule.
-    """
-    natom = mol.size()
-    symbols = []
-    for i in range(natom):
-        symbols.append(get_symbol(mol.at(i).Z))
-    return symbols
-        
-def get_atomic_mass(x):
-    """Return the atomic mass of an element or atom.
-
-    Parameters
-    ----------
-    x : str or int
-        Element symbol or atomic number
-
-    Returns
-    -------
-    mass : float
-        Atomic mass of the atom
-    """
-    mass = 0.0
-    if type(x) == str:
-        atomic_number = get_atomic_number(x)
-        mass = atomic_masses[atomic_number]
-    elif type(x) == int:
-        mass = atomic_masses[x]
-    else:
-        print("Error: Invalid input type")
-    return mass
-    
-def get_molecule(symbols, coordinates):
-    """Return a chemist.Molecule object from a list of symbols and coordinates.
-
-    Parameters
-    ----------
-    symbols : list of str
-        List of element symbols
-    coordinates : list of lists of floats
-        List of lists containing the coordinates of the atoms in the molecule.
-        The inner lists contain the x, y, and z coordinates of each atom.
-
-    Returns
-    -------
-    mol : chemist.Molecule
-        chemist.Molecule object
-    """
-    natom = len(symbols)
-    mol = chemist.Molecule()
-    if type(coordinates[0]) == list or type(coordinates[0]).startswith('np'):
-        coordinates = list(itertools.chain(*coordinates))
-    for i in range(natom):
-        x, y, z = [float(x) for x in coordinates[3 * i:3 * i + 3]]
-        symbol = symbols[i]
-        atomic_number = get_atomic_number(symbol)
-        mass = get_atomic_mass(atomic_number)
-        atom = chemist.Atom(symbol, atomic_number, mass, x, y, z)
-        mol.push_back(atom)
-    return mol
