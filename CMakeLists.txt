@@ -32,14 +32,6 @@ cpp_find_or_build_dependency(
     CMAKE_ARGS BUILD_TESTING=OFF
 )
 
-if("${NWX_MODULE_DIRECTORY}" STREQUAL "")
-    message(
-        FATAL_ERROR "NWX_MODULE_DIRECTORY must be set to the directory "
-                    "where you would like the Python modules installed."
-    )
-endif()
-
-
 if("${BUILD_TESTING}")
     include(CTest)
     include(nwx_pybind11)
