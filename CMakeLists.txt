@@ -20,15 +20,13 @@ include(nwx_versions)
 
 ### Options ###
 option(BUILD_TESTING "Should we build the tests?" OFF)
-option(BUILD_PYBIND11_PYBINDINGS "Use Pybind11 to build Python bindings?" ON)
-option(ENABLE_NWCHEM "Should we build supporf for friend: NWChem ?" ON)
 
 ## Build StructureFinder's dependencies ##
 cpp_find_or_build_dependency(
     nwchemex
     URL github.com/NWChemEx-Project/NWChemEx
     PRIVATE TRUE
-    VERSION ${NWX_SIMDE_VERSION}
+    VERSION master
     BUILD_TARGET nwchemex
     FIND_TARGET nwx::nwchemex
     CMAKE_ARGS BUILD_TESTING=OFF
