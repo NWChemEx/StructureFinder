@@ -1,0 +1,14 @@
+name: .github Merge Workflow
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  Common-Merge:
+    uses: NWChemEx-Project/.github/.github/workflows/common_merge.yaml@master
+    with:
+      doc_target: 'Sphinx'
+      generate_module_docs: false
+    secrets: inherit

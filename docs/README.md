@@ -14,5 +14,5 @@
   ~ limitations under the License.
 -->
 
-# StructureFinder
-Repo for geometry optimization, transition states, etc. Much of this repo will be Python based, providing interfaces to geomeTRIC, pyBerny, ASE NEB, etc.
+General instructions for building documentation found throughout the NWChemEx project are available at:
+https://github.com/NWChemEx-Project/NWChemEx/blob/master/docs/README.md

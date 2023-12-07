@@ -1,0 +1,16 @@
+name: .github Pull Request Workflow
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  Common-Pull-Request:
+    uses: NWChemEx-Project/.github/.github/workflows/common_pull_request.yaml@master
+    with:
+      config_file: '.github/.licenserc.yaml'
+      source_dir: ''
+      compilers: ''
+      doc_target: 'Sphinx'
+    secrets: inherit
