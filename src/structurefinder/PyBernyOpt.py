@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 from nwchemex import chemist
 from berny import Berny, geomlib, optimize
 from berny.solvers import MopacSolver
