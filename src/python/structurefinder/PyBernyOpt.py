@@ -29,6 +29,8 @@ def optimize_pyberny(molecule):
     for geom in optimizer:
         energy, gradients = solver.send((list(geom), geom.lattice))
         optimizer.send((energy, gradients))
-    
+
+    relaxed = geom
+    xyz_opt = relaxed.dumps(fmt='xyz')
     # Optimized energy is of type "float"
-    return energy
+    return energy, xyz_opt
