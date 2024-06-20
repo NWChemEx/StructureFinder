@@ -16,8 +16,13 @@ def optimize_pyberny(molecule):
     returns the energy of the optimized system.
     """
     # Convert a Chemical System to an XYZ coordinate string
-    xyz = str(molecule.size()) + "\n\n" + str(molecule.nuclei)
-    
+    xyz = ""
+    xyz += (str(molecule.size()) + "\n\n")
+    for i in range(molecule.size()):
+        xyz += (molecule.at(i).name + " " + 
+                str(molecule.at(i).x) + " " + 
+                str(molecule.at(i).y) + " " + 
+                str(molecule.at(i).z) + "\n")
     # Loads the geometry string into the Berny optimizer
     # object.
     optimizer = Berny(geomlib.loads(xyz, fmt='xyz'))
