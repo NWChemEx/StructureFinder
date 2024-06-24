@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 def load_modules(mm):
     """
     Loads the collection of all modules provided by StructureFinder.

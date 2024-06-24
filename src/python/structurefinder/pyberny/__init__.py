@@ -15,6 +15,7 @@
 import pluginplay as pp
 from simde import TotalEnergy
 
+
 class GeomoptViaPyberny(pp.ModuleBase):
 
     def __init__(self):
