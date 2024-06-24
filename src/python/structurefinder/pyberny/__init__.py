@@ -20,7 +20,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
     def __init__(self):
         pp.ModuleBase.__init__(self)
         self.satisfies_property_type(TotalEnergy())
-        self.description("Performs PyBerny optimization)
+        self.description("Performs PyBerny optimization")
         self.add_input('molecule')
 
     def run_(self, inputs, submods):
