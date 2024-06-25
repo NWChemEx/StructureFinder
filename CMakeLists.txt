@@ -22,6 +22,8 @@ project(structurefinder VERSION "${VERSION}" LANGUAGES CXX)
 include(cmake/get_cmaize.cmake)
 
 ## Paths ##
+set(${PROJECT_NAME}_INC_DIR "${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}")
+set(${PROJECT_NAME}_SRC_DIR "${CMAKE_CURRENT_LIST_DIR}/src/${PROJECT_NAME}")
 set(${PROJECT_NAME}_TESTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests")
 set(${PROJECT_NAME}_PYTHON_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/python")
 set(${PROJECT_NAME}_PYTHON_TEST_DIR "${${PROJECT_NAME}_TESTS_DIR}/python")
@@ -47,6 +49,10 @@ cmaize_find_or_build_dependency(
     pyberny
     PACKAGE_MANAGER pip
 )
+
+# Builds C++ API documentation
+include(nwx_cxx_api_docs)
+nwx_cxx_api_docs("${${PROJECT_NAME}_INC_DIR}" "${${PROJECT_NAME}_SRC_DIR}")
 
 ## Add libraries ##
 add_library(${PROJECT_NAME} INTERFACE)
