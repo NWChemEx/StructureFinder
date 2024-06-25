@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .pyberny import load_pyberny_modules
 
 def load_modules(mm):
     """

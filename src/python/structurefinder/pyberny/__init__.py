@@ -51,3 +51,6 @@ class GeomoptViaPyberny(pp.ModuleBase):
         e = energy
         rv = self.results()
         return pr.wrap_results(rv, e)
+
+def load_pyberny_modules(mm):
+
