@@ -14,6 +14,7 @@
 
 from .pyberny import load_pyberny_modules
 
+
 def load_modules(mm):
     """
     Loads the collection of all modules provided by StructureFinder.
