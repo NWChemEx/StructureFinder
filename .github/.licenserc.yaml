@@ -21,5 +21,6 @@ header:
     - .github/
     - LICENSE
     - version.txt
+    - docs/source/nitpick_exceptions
 
   comment: never
