@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from structurefinder.pybernyopt import optimize_pyberny
+from structurefinder import load_modules
+import pluginplay as pp
 import chemist
 import unittest
 
@@ -20,8 +21,9 @@ import unittest
 class Test_optimize_pyberny(unittest.TestCase):
 
     def test_optimize_pyberny(self):
-        egy, new_geom = optimize_pyberny(self.mol)
-        #TODO: Actual unit tests
+        mm = pp.ModuleManager()
+        load_modules(mm)
+        egy = mm.run_as("PyBerny", chemist.ChemicalSystem(self.mol))
         print("Energy = " + egy)
 
     def setUp(self):
