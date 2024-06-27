@@ -54,8 +54,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
             qc_mol2chemicalsystem = chemical_system_conversions.qc_mol2molecule(
                 xyz2qc_mol)
             geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
-            
-            
+
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
             gradients = submods["Gradient"].run_as(
                 EnergyNuclearGradientStdVectorD(), geom, pointset1)
