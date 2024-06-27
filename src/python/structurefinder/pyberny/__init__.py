@@ -13,11 +13,11 @@
 # limitations under the License.
 
 import pluginplay as pp
-from friendzone.nwx2qcelemental import chemical_system_conversion
+from friendzone.nwx2qcelemental import chemical_system_conversions
 from simde import EnergyNuclearGradientStdVectorD
 from berny import Berny, geomlib, optimize
 import chemist
-
+import qcelemental as qcel
 
 class GeomoptViaPyberny(pp.ModuleBase):
 
@@ -29,10 +29,11 @@ class GeomoptViaPyberny(pp.ModuleBase):
                            "Energy and Gradient")
 
     def run_(self, inputs, submods):
-        pt = EnergyNuclearGradientsStdVectorD()
+        pt = EnergyNuclearGradientStdVectorD()
         mol, pointset1 = pt.unwrap_inputs(inputs)
         molecule = mol.molecule
 
+        # Convert Chemist Chemical System to XYZ
         xyz = ""
         xyz += (str(molecule.size()) + "\n\n")
         for i in range(molecule.size()):
@@ -49,7 +50,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
                 xyz2qc_mol)
             geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
             energy, gradients = submods["Energy and Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom, PointSetD())
+                EnergyNuclearGradientStdVectorD(), geom, pointset1)
             optimizer.send((energy, gradients))
 
         relaxed = geom
