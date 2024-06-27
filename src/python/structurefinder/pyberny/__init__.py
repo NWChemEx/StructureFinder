@@ -23,7 +23,8 @@ class GeomoptViaPyberny(pp.ModuleBase):
         pp.ModuleBase.__init__(self)
         self.satisfies_property_type(EnergyNuclearGradientStdVectorD())
         self.description("Performs PyBerny optimization")
-        self.add_submodule(EnergyNuclearGradientStdVectorD(), "Energy and Gradient")
+        self.add_submodule(EnergyNuclearGradientStdVectorD(),
+                           "Energy and Gradient")
 
     def run_(self, inputs, submods):
         pt = EnergyNuclearGradientsStdVectorD()
