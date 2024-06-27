@@ -19,6 +19,7 @@ from berny import Berny, geomlib, optimize
 import chemist
 import qcelemental as qcel
 
+
 class GeomoptViaPyberny(pp.ModuleBase):
 
     def __init__(self):
