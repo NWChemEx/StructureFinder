@@ -16,6 +16,7 @@ import pluginplay as pp
 from simde import TotalEnergy, EnergyNuclearGradientStdVectorD
 from berny import Berny, geomlib, optimize
 
+
 class GeomoptViaPyberny(pp.ModuleBase):
 
     def __init__(self):
@@ -24,7 +25,6 @@ class GeomoptViaPyberny(pp.ModuleBase):
         self.description("Performs PyBerny optimization")
         self.add_submodule(TotalEnergy(), "Energy")
         self.add_submodule(EnergyNuclearGradientStdVectorD(), "Energy and Gradient")
-        
     def run_(self, inputs, submods):
         pt = TotalEnergy()
         mol, = pt.unwrap_inputs(inputs)
