@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import pluginplay as pp
-from simde import TotalEnergy
-
+from simde import TotalEnergy, EnergyNuclearGradientStdVectorD
+from berny import Berny, geomlib, optimize
 
 class GeomoptViaPyberny(pp.ModuleBase):
 
@@ -22,7 +22,9 @@ class GeomoptViaPyberny(pp.ModuleBase):
         pp.ModuleBase.__init__(self)
         self.satisfies_property_type(TotalEnergy())
         self.description("Performs PyBerny optimization")
-
+        self.add_submodule(TotalEnergy(), "Energy")
+        self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
+        
     def run_(self, inputs, submods):
         pt = TotalEnergy()
         mol, = pt.unwrap_inputs(inputs)
@@ -39,8 +41,8 @@ class GeomoptViaPyberny(pp.ModuleBase):
         optimizer = Berny(geomlib.loads(xyz, fmt='xyz'))
 
         for geom in optimizer:
-            energy = calculate_energy(geom)
-            gradients = calculate_gradient(geom)
+            energy = submods["Energy"].run_as(TotalEnergy(), geom)
+            gradients = submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom)
             optimizer.send((energy, gradients))
 
         relaxed = geom
