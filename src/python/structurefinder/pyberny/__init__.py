@@ -18,6 +18,7 @@ from simde import EnergyNuclearGradientStdVectorD
 from berny import Berny, geomlib, optimize
 import chemist
 
+
 class GeomoptViaPyberny(pp.ModuleBase):
 
     def __init__(self):
