@@ -25,13 +25,16 @@ class GeomoptViaPyberny(pp.ModuleBase):
     def __init__(self):
         pp.ModuleBase.__init__(self)
         self.satisfies_property_type(EnergyNuclearGradientStdVectorD())
+        self.satisfies_property_type(TotalEnergy())
         self.description("Performs PyBerny optimization")
-        self.add_submodule(EnergyNuclearGradientStdVectorD(),
-                           "Energy and Gradient")
+        self.add_submodule(TotalEnergy(), "Energy")
+        self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
 
     def run_(self, inputs, submods):
-        pt = EnergyNuclearGradientStdVectorD()
-        mol, pointset1 = pt.unwrap_inputs(inputs)
+        e_pt = TotalEnergy()
+        g_pt = EnergyNuclearGradientStdVectorD()
+        mol, = e_pt.unwrap_inputs(inputs)
+        grad, = g_pt.unwrap_inputs(inputs)
         molecule = mol.molecule
 
         # Convert Chemist Chemical System to XYZ
@@ -46,11 +49,15 @@ class GeomoptViaPyberny(pp.ModuleBase):
         optimizer = Berny(geomlib.loads(xyz, fmt='xyz'))
 
         for geom in optimizer:
+            # Converts the "Berny" geometry object to Chemical System
             xyz2qc_mol = qcel.models.Molecule.from_data(geom.dumps('xyz'))
             qc_mol2chemicalsystem = chemical_system_conversions.qc_mol2molecule(
                 xyz2qc_mol)
             geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
-            energy, gradients = submods["Energy and Gradient"].run_as(
+            
+            
+            energy = submods["Energy"].run_as(TotalEnergy(), geom)
+            gradients = submods["Gradient"].run_as(
                 EnergyNuclearGradientStdVectorD(), geom, pointset1)
             optimizer.send((energy, gradients))
 
