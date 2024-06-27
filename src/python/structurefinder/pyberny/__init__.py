@@ -23,7 +23,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
         self.satisfies_property_type(TotalEnergy())
         self.description("Performs PyBerny optimization")
         self.add_submodule(TotalEnergy(), "Energy")
-        self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
+        self.add_submodule(EnergyNuclearGradientStdVectorD(), "Energy and Gradient")
         
     def run_(self, inputs, submods):
         pt = TotalEnergy()
@@ -41,8 +41,10 @@ class GeomoptViaPyberny(pp.ModuleBase):
         optimizer = Berny(geomlib.loads(xyz, fmt='xyz'))
 
         for geom in optimizer:
-            energy = submods["Energy"].run_as(TotalEnergy(), geom)
-            gradients = submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom)
+            xyz2qc_mol = qcel.models.Molecule.from_data(geom.dumps('xyz'))
+            qc_mol2chemicalsystem = chemical_system_conversions.qc_mol2molecule(xyz2qc_mol)
+            geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
+            energy, gradients = submods["Energy and Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom)
             optimizer.send((energy, gradients))
 
         relaxed = geom
