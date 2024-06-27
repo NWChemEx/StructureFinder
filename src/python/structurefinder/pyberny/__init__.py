@@ -42,9 +42,11 @@ class GeomoptViaPyberny(pp.ModuleBase):
 
         for geom in optimizer:
             xyz2qc_mol = qcel.models.Molecule.from_data(geom.dumps('xyz'))
-            qc_mol2chemicalsystem = chemical_system_conversions.qc_mol2molecule(xyz2qc_mol)
+            qc_mol2chemicalsystem = chemical_system_conversions.qc_mol2molecule(
+                xyz2qc_mol)
             geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
-            energy, gradients = submods["Energy and Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom)
+            energy, gradients = submods["Energy and Gradient"].run_as(
+                EnergyNuclearGradientStdVectorD(), geom)
             optimizer.send((energy, gradients))
 
         relaxed = geom
