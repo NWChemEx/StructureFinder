@@ -57,7 +57,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
 
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
             gradients = submods["Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom, pointset1)
+                EnergyNuclearGradientStdVectorD(), geom, geom.molecule.nuclei)
             optimizer.send((energy, gradients))
 
         relaxed = geom
