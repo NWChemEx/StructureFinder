@@ -14,7 +14,7 @@
 
 import pluginplay as pp
 from friendzone.nwx2qcelemental import chemical_system_conversions
-from simde import EnergyNuclearGradientStdVectorD
+from simde import EnergyNuclearGradientStdVectorD, TotalEnergy
 from berny import Berny, geomlib, optimize
 import chemist
 import qcelemental as qcel
