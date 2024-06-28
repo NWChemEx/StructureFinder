@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import pluginplay as pp
-from friendzone.nwx2qcelemental import chemical_system_conversions
+from friendzone.nwx2qcelemental.chemical_system_conversions import qc_mol2molecule, chemical_system2qc_mol
 from simde import EnergyNuclearGradientStdVectorD, TotalEnergy
 from berny import Berny, geomlib, optimize
 import chemist
@@ -48,22 +48,22 @@ class GeomoptViaPyberny(pp.ModuleBase):
         for geom in optimizer:
             # Converts the "Berny" geometry object to Chemical System
             xyz2qc_mol = qcel.models.Molecule.from_data(geom.dumps('xyz'))
-            qc_mol2chemicalsystem = chemical_system_conversions.qc_mol2molecule(
-                xyz2qc_mol)
+            qc_mol2chemicalsystem = qc_mol2molecule(xyz2qc_mol)
             geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
 
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
             gradients = submods["Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom, geom.molecule.nuclei)
+                EnergyNuclearGradientStdVectorD(), geom, chemist.PointSetD())
             optimizer.send((energy, gradients))
 
-        relaxed = geom
-        xyz_opt = relaxed.dumps(fmt='xyz')
+
+        relaxed = chemical_system2qc_mol(geom)
+        xyz_opt = relaxed.to_string('xyz')
         print(xyz_opt)
         # Optimized energy is of type "float"
         e = energy
         rv = self.results()
-        return pr.wrap_results(rv, e)
+        return pt.wrap_results(rv, e)
 
 
 def load_pyberny_modules(mm):
