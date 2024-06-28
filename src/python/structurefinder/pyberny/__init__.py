@@ -56,7 +56,6 @@ class GeomoptViaPyberny(pp.ModuleBase):
                 EnergyNuclearGradientStdVectorD(), geom, chemist.PointSetD())
             optimizer.send((energy, gradients))
 
-
         relaxed = chemical_system2qc_mol(geom)
         xyz_opt = relaxed.to_string('xyz')
         print(xyz_opt)
