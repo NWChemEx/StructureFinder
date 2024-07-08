@@ -12,19 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from structurefinder import load_modules
+import structurefinder
+import nwchemex.load_modules
 import pluginplay as pp
 import chemist
 import unittest
-
+from simde import TotalEnergy
 
 class Test_optimize_pyberny(unittest.TestCase):
 
     def test_optimize_pyberny(self):
         mm = pp.ModuleManager()
-        load_modules(mm)
-        egy = mm.run_as("PyBerny", chemist.ChemicalSystem(self.mol))
-        print("Energy = " + egy)
+        nwchemex.load_modules(mm)
+        structurefinder.load_modules(mm)
+        mm.change_input("NWChem : SCF", "basis set", "sto-3g")
+        mm.change_input("NWChem : SCF Gradient", "basis set", "sto-3g")
+        mm.change_submod("PyBerny", "Gradient", "NWChem : SCF Gradient")
+        mm.change_submod("PyBerny", "Energy", "NWChem : SCF")
+        mm.change_submod("Pyberny", "StringConv", "ChemicalSystem via QCElemental")
+        egy = mm.run_as(TotalEnergy(), "PyBerny", chemist.ChemicalSystem(self.mol))
+        print("Energy = " + str(egy))
 
     def setUp(self):
         self.mol = chemist.Molecule()
