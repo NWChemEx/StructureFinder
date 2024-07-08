@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import structurefinder
-import nwchemex.load_modules
+import nwchemex
 import pluginplay as pp
 import chemist
 import unittest
