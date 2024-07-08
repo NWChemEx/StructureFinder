@@ -13,8 +13,7 @@
 # limitations under the License.
 
 import pluginplay as pp
-from friendzone.nwx2qcelemental.chemical_system_conversions import qc_mol2molecule, chemical_system2qc_mol
-from simde import EnergyNuclearGradientStdVectorD, TotalEnergy
+from simde import EnergyNuclearGradientStdVectorD, TotalEnergy, MoleculeFromString
 from berny import Berny, geomlib, optimize
 import chemist
 import qcelemental as qcel
@@ -28,7 +27,8 @@ class GeomoptViaPyberny(pp.ModuleBase):
         self.description("Performs PyBerny optimization")
         self.add_submodule(TotalEnergy(), "Energy")
         self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
-
+        self.add_submodule(MoleculeFromString(), "StringConv")
+        
     def run_(self, inputs, submods):
         pt = TotalEnergy()
         mol, = pt.unwrap_inputs(inputs)
@@ -46,22 +46,33 @@ class GeomoptViaPyberny(pp.ModuleBase):
         optimizer = Berny(geomlib.loads(xyz, fmt='xyz'))
 
         for geom in optimizer:
-            # Converts the "Berny" geometry object to Chemical System
-            xyz2qc_mol = qcel.models.Molecule.from_data(geom.dumps('xyz'))
-            qc_mol2chemicalsystem = qc_mol2molecule(xyz2qc_mol)
-            geom = chemist.ChemicalSystem(qc_mol2chemicalsystem)
 
+            # Converts the "Berny" geometry object to Chemical System
+            geom2xyz = geom.dumps('xyz')
+            print('Berny Geom to XYZ value: \n' + geom2xyz + '\n')
+            lines = geom2xyz.split('\n')
+            print('Lines of geom2xyz: \n' + str(lines) + '\n')
+            mol_string = '\n'.join(lines[2:])
+            print('Lines to string: \n' + mol_string + '\n')
+            xyz2chem_mol = submods["StringConv"].run_as(MoleculeFromString(), mol_string)
+            print('String conversion from xyz to chem sys: \n' + str(xyz2chem_mol.nuclei) + '\n')
+            geom = chemist.ChemicalSystem(xyz2chem_mol)
+            print('Chemical system of xyz2chem_mol: \n' + str(geom.molecule.nuclei) + '\n')
+
+            # Main optimizer operation
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
+            print('Interim energy: \n' + str(energy) + '\n')
             gradients = submods["Gradient"].run_as(
                 EnergyNuclearGradientStdVectorD(), geom, chemist.PointSetD())
+            print('Interim gradient: \n' + str(gradients) + '\n')
             optimizer.send((energy, gradients))
 
+        opt_geom = geom.molecule.nuclei
+        print('Resulting relaxed geometry (assigned to variable opt_geom): \n' + str(opt_geom))
 
-        relaxed = chemical_system2qc_mol(geom)
-        xyz_opt = relaxed.to_string('xyz')
-        print(xyz_opt)
         # Optimized energy is of type "float"
         e = energy
+        print(e)
         rv = self.results()
         return pt.wrap_results(rv, e)
 
