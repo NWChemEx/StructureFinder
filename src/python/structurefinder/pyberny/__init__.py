@@ -69,7 +69,6 @@ class GeomoptViaPyberny(pp.ModuleBase):
 
         opt_geom = geom.molecule.nuclei
         print('Resulting relaxed geometry (assigned to variable opt_geom): \n' + str(opt_geom))
-
         # Optimized energy is of type "float"
         e = energy
         print(e)
