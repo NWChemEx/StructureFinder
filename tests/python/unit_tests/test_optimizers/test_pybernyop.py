@@ -19,6 +19,7 @@ import chemist
 import unittest
 from simde import TotalEnergy
 
+
 class Test_optimize_pyberny(unittest.TestCase):
 
     def test_optimize_pyberny(self):
@@ -29,8 +30,10 @@ class Test_optimize_pyberny(unittest.TestCase):
         mm.change_input("NWChem : SCF Gradient", "basis set", "sto-3g")
         mm.change_submod("PyBerny", "Gradient", "NWChem : SCF Gradient")
         mm.change_submod("PyBerny", "Energy", "NWChem : SCF")
-        mm.change_submod("Pyberny", "StringConv", "ChemicalSystem via QCElemental")
-        egy = mm.run_as(TotalEnergy(), "PyBerny", chemist.ChemicalSystem(self.mol))
+        mm.change_submod("Pyberny", "StringConv",
+                         "ChemicalSystem via QCElemental")
+        egy = mm.run_as(TotalEnergy(), "PyBerny",
+                        chemist.ChemicalSystem(self.mol))
         print("Energy = " + str(egy))
 
     def setUp(self):

@@ -28,7 +28,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
         self.add_submodule(TotalEnergy(), "Energy")
         self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
         self.add_submodule(MoleculeFromString(), "StringConv")
-        
+
     def run_(self, inputs, submods):
         pt = TotalEnergy()
         mol, = pt.unwrap_inputs(inputs)
@@ -54,10 +54,13 @@ class GeomoptViaPyberny(pp.ModuleBase):
             print('Lines of geom2xyz: \n' + str(lines) + '\n')
             mol_string = '\n'.join(lines[2:])
             print('Lines to string: \n' + mol_string + '\n')
-            xyz2chem_mol = submods["StringConv"].run_as(MoleculeFromString(), mol_string)
-            print('String conversion from xyz to chem sys: \n' + str(xyz2chem_mol.nuclei) + '\n')
+            xyz2chem_mol = submods["StringConv"].run_as(
+                MoleculeFromString(), mol_string)
+            print('String conversion from xyz to chem sys: \n' +
+                  str(xyz2chem_mol.nuclei) + '\n')
             geom = chemist.ChemicalSystem(xyz2chem_mol)
-            print('Chemical system of xyz2chem_mol: \n' + str(geom.molecule.nuclei) + '\n')
+            print('Chemical system of xyz2chem_mol: \n' +
+                  str(geom.molecule.nuclei) + '\n')
 
             # Main optimizer operation
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
@@ -68,7 +71,9 @@ class GeomoptViaPyberny(pp.ModuleBase):
             optimizer.send((energy, gradients))
 
         opt_geom = geom.molecule.nuclei
-        print('Resulting relaxed geometry (assigned to variable opt_geom): \n' + str(opt_geom))
+        print(
+            'Resulting relaxed geometry (assigned to variable opt_geom): \n' +
+            str(opt_geom))
         # Optimized energy is of type "float"
         e = energy
         print(e)
