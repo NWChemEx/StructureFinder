@@ -64,10 +64,19 @@ if("${BUILD_TESTING}")
     include(nwx_pybind11)
 
     ## Add Tests ##
+    cmaize_find_or_build_dependency(
+        nwchemex
+        URL github.com/NWChemEx/NWChemEx
+        BUILD_TARGET nwchemex
+        FIND_TARGET nwx::nwchemex
+        CMAKE_ARGS BUILD_TESTING=OFF
+    )
+
     nwx_pybind11_tests(
         py_${PROJECT_NAME}
         "${${PROJECT_NAME}_PYTHON_TEST_DIR}/unit_tests/test_${PROJECT_NAME}.py"
-        SUBMODULES simde chemist pluginplay parallelzone
+        DEPENDS nwchemex
+        SUBMODULES simde chemist pluginplay parallelzone friendzone chemcache nwchemex
     )
 
 endif()
