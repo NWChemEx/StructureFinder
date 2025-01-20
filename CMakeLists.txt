@@ -19,7 +19,9 @@ file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" VERSION)
 project(structurefinder VERSION "${VERSION}" LANGUAGES CXX)
 
 ## Get CMaize
-include(cmake/get_cmaize.cmake)
+include(cmake/get_nwx_cmake.cmake)
+include(nwx_versions)
+include(get_cmaize)
 
 ## Paths ##
 set(${PROJECT_NAME}_INC_DIR "${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}")
