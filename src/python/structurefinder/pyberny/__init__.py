@@ -67,7 +67,8 @@ class GeomoptViaPyberny(pp.ModuleBase):
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
             print('Interim energy: \n' + str(energy) + '\n')
             gradients = submods["Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom, geom_points.as_point_set())
+                EnergyNuclearGradientStdVectorD(), geom,
+                geom_points.as_point_set())
             print('Interim gradient: \n' + str(gradients) + '\n')
             optimizer.send((energy, gradients))
 
