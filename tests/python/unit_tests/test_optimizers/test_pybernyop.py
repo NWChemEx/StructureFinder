@@ -35,6 +35,7 @@ class Test_optimize_pyberny(unittest.TestCase):
         egy = mm.run_as(TotalEnergy(), "PyBerny",
                         chemist.ChemicalSystem(self.mol))
         print("Energy = " + str(egy))
+        self.assertAlmostEqual(egy, -1.117505879316, 10)
 
     def setUp(self):
         self.mol = chemist.Molecule()

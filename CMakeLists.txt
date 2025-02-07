@@ -72,6 +72,7 @@ if("${BUILD_TESTING}")
         BUILD_TARGET nwchemex
         FIND_TARGET nwx::nwchemex
         CMAKE_ARGS BUILD_TESTING=OFF
+        BUILD_FULL_CHEMCACHE=OFF
     )
 
     nwx_pybind11_tests(
