@@ -14,9 +14,8 @@
 
 import pluginplay as pp
 from simde import EnergyNuclearGradientStdVectorD, TotalEnergy, MoleculeFromString
-from berny import Berny, geomlib, optimize
+from berny import Berny, geomlib
 import chemist
-import qcelemental as qcel
 
 
 class GeomoptViaPyberny(pp.ModuleBase):
@@ -61,12 +60,15 @@ class GeomoptViaPyberny(pp.ModuleBase):
             geom = chemist.ChemicalSystem(xyz2chem_mol)
             print('Chemical system of xyz2chem_mol: \n' +
                   str(geom.molecule.nuclei) + '\n')
+            geom_nuclei = geom.molecule.nuclei.as_nuclei()
+            geom_points = geom_nuclei.charges.point_set
 
             # Main optimizer operation
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
             print('Interim energy: \n' + str(energy) + '\n')
             gradients = submods["Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom, chemist.PointSetD())
+                EnergyNuclearGradientStdVectorD(), geom,
+                geom_points.as_point_set())
             print('Interim gradient: \n' + str(gradients) + '\n')
             optimizer.send((energy, gradients))
 

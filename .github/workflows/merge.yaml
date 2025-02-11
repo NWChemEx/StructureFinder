@@ -24,6 +24,6 @@ jobs:
   Common-Merge:
     uses: NWChemEx/.github/.github/workflows/common_merge.yaml@master
     with:
-      doc_target: 'structure_finder_cxx_api'
+      doc_target: ''
       generate_module_docs: true
     secrets: inherit

@@ -45,16 +45,13 @@ cmaize_find_or_build_dependency(
     FIND_TARGET nwx::simde
     CMAKE_ARGS BUILD_TESTING=OFF
                BUILD_PYBIND11_PYBINDINGS=${BUILD_PYBIND11_PYBINDINGS}
+               BUILD_DOCS=OFF
 )
 
 cmaize_find_or_build_dependency(
     pyberny
     PACKAGE_MANAGER pip
 )
-
-# Builds C++ API documentation
-include(nwx_cxx_api_docs)
-nwx_cxx_api_docs("${${PROJECT_NAME}_INC_DIR}" "${${PROJECT_NAME}_SRC_DIR}")
 
 ## Add libraries ##
 add_library(${PROJECT_NAME} INTERFACE)
@@ -72,6 +69,7 @@ if("${BUILD_TESTING}")
         BUILD_TARGET nwchemex
         FIND_TARGET nwx::nwchemex
         CMAKE_ARGS BUILD_TESTING=OFF
+        BUILD_FULL_CHEMCACHE=OFF
     )
 
     nwx_pybind11_tests(

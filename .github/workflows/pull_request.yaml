@@ -27,5 +27,5 @@ jobs:
       config_file: '.github/.licenserc.yaml'
       source_dir: ''
       compilers: '["gcc-11", "clang-14"]'
-      doc_target: 'structure_finder_cxx_api'
+      doc_target: ''
     secrets: inherit
