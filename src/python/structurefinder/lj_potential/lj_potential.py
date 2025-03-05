@@ -11,12 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""
-@author: Felix Rojas
-"""
-
 import numpy as np
-import pluginplay as pp
+import plugandplay as pp
 from simde import TotalEnergy
 
 
@@ -24,7 +20,11 @@ class LJ_potential(pp.ModuleBase):
     # Module Construct --------------------------------------------------------
     def __init__(self):
         """
-        This module Evaluates the Lennard-Jones 1D potential function (E)
+        This module Evaluates the Lennard-Jones 1D potential function (E), and 
+        calculates minus the gradient (Force) in Cartesian coordinates, 
+        according to the relation
+        
+                                 FC = - dE/dx       
         """
         pp.ModuleBase.__init__(self)
         self.description("Lennard-Jones 1D potential function")
@@ -33,35 +33,35 @@ class LJ_potential(pp.ModuleBase):
     #--------------------------------------------------------------------------
 
     # Module run_ member function ---------------------------------------------
-    def run_(self, inputs, submods):
+    def run_(self, inputs):
         """
         Parameters
         ----------
-        inputs : Diatomic distance, 
+        inputs : x-coordinate, 
         TYPE ---> Float
     
         Returns
         -------
         E: Lennard-Jonnes 1D potential Energy, 
         TYPE ---> Float 
+        
+        FC: Force in cartesian coordinates evaluated at the given input, 
+        acording to the relation
+                                 FC = - dE/dx  
+        
+        TYPE ---> Float
         """
         pt = TotalEnergy()
-        chem_sys, = pt.unwrap_inputs(inputs)
-        mol = chem_sys.molecule
-        coor_0 = np.array([mol.at(0).x,mol.at(0).y,mol.at(0).z])
-        coor_1 = np.array([mol.at(1).x,mol.at(1).y,mol.at(1).z])
-        #----------------------------------------------------------------------
-        assert(mol.size() == 2) #<--- To check molcule size contains 2-atoms
-        #----------------------------------------------------------------------
-        r = np.linalg.norm(coor_0 - coor_1)
+        x0 = pt.unwrap_inputs(inputs)
         #-------------- LENNARD-JONES FUNCTION --------------------------------
-        E = 4*((1/r**12)-(1/r**6))
-        #------------- ANALYTIC FORCE -----------------------------------------        
-        DE_x = -24*((2/r**13)-(1/r**7))
+        E = lambda x: 4 * ((1 / x**12) - (1 / x**6))
+        #------------- ANALYTIC FORCE -----------------------------------------
+        DE_x = -24 * ((2 / x0**13) - (1 / x0**7))
         FC = -DE_x
         #----------------------------------------------------------------------
-        rv = self.results()   
-        return pt.wrap_results(rv, E)
+        rv = self.results()
+        return pt.wrap_results(rv, E(x0), FC)
+
     #--------------------------------------------------------------------------
 
 
