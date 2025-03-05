@@ -3,7 +3,7 @@
 """
 
 import numpy as np
-import plugandplay as pp
+import pluginplay as pp
 from simde import TotalEnergy
 
 class LJ_potential(pp.ModuleBase):
@@ -18,7 +18,7 @@ class LJ_potential(pp.ModuleBase):
     #--------------------------------------------------------------------------
     
     # Module run_ member function ---------------------------------------------
-    def run_(self, inputs):
+    def run_(self, inputs, submods):
         """
         Parameters
         ----------
@@ -31,15 +31,22 @@ class LJ_potential(pp.ModuleBase):
         TYPE ---> Float 
         """    
         pt = TotalEnergy()
-        x0 = pt.unwrap_inputs(inputs)
+        chem_sys, = pt.unwrap_inputs(inputs)
+        mol = chem_sys.molecule
+        coor_0 = np.array([mol.at(0).x,mol.at(0).y,mol.at(0).z])
+        coor_1 = np.array([mol.at(1).x,mol.at(1).y,mol.at(1).z])
+        #----------------------------------------------------------------------
+        assert(mol.size() == 2) #<--- To check molcule size contains 2-atoms
+        #----------------------------------------------------------------------
+        r = np.linalg.norm(coor_0 - coor_1)
         #-------------- LENNARD-JONES FUNCTION --------------------------------
-        E = lambda x: 4*((1/x**12)-(1/x**6))
+        E = 4*((1/r**12)-(1/r**6))
         #------------- ANALYTIC FORCE -----------------------------------------        
-        DE_x = -24*((2/x0**13)-(1/x0**7))
+        DE_x = -24*((2/r**13)-(1/r**7))
         FC = -DE_x
         #----------------------------------------------------------------------
-        rv = self.results()    
-        return pt.wrap_results(rv, E(x0))
+        rv = self.results()   
+        return pt.wrap_results(rv, E)
     #--------------------------------------------------------------------------
     
 def load_Lenard_Jones_potential(mm):
