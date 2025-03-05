@@ -48,20 +48,21 @@ class LJ_potential(pp.ModuleBase):
         pt = TotalEnergy()
         chem_sys, = pt.unwrap_inputs(inputs)
         mol = chem_sys.molecule
-        coor_0 = np.array([mol.at(0).x,mol.at(0).y,mol.at(0).z])
-        coor_1 = np.array([mol.at(1).x,mol.at(1).y,mol.at(1).z])
+        coor_0 = np.array([mol.at(0).x, mol.at(0).y, mol.at(0).z])
+        coor_1 = np.array([mol.at(1).x, mol.at(1).y, mol.at(1).z])
         #----------------------------------------------------------------------
-        assert(mol.size() == 2) #<--- To check molcule size contains 2-atoms
+        assert (mol.size() == 2)  #<--- To check molcule size contains 2-atoms
         #----------------------------------------------------------------------
         r = np.linalg.norm(coor_0 - coor_1)
         #-------------- LENNARD-JONES FUNCTION --------------------------------
-        E = 4*((1/r**12)-(1/r**6))
-        #------------- ANALYTIC FORCE -----------------------------------------        
-        DE_x = -24*((2/r**13)-(1/r**7))
+        E = 4 * ((1 / r**12) - (1 / r**6))
+        #------------- ANALYTIC FORCE -----------------------------------------
+        DE_x = -24 * ((2 / r**13) - (1 / r**7))
         FC = -DE_x
         #----------------------------------------------------------------------
-        rv = self.results()   
+        rv = self.results()
         return pt.wrap_results(rv, E)
+
     #--------------------------------------------------------------------------
 
 

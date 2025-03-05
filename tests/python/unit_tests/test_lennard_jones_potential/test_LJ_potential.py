@@ -18,15 +18,17 @@ import chemist
 import unittest
 from simde import TotalEnergy
 
+
 class Test_Lennard_jones_potential(unittest.TestCase):
 
     def test_lennard_jones_potential(self):
-        result = self.mm.run_as(TotalEnergy(),"Lenard-Jones", chemist.ChemicalSystem(self.mol))
-        self.assertEqual(result,-1.0)
+        result = self.mm.run_as(TotalEnergy(), "Lenard-Jones",
+                                chemist.ChemicalSystem(self.mol))
+        self.assertEqual(result, -1.0)
 
     def setUp(self):
         self.mm = pp.ModuleManager()
         structurefinder.load_modules(self.mm)
         self.mol = chemist.Molecule()
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 0.0))
-        self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 2**(1/6)))
+        self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 2**(1 / 6)))
