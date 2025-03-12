@@ -20,7 +20,7 @@ import pluginplay as pp
 from simde import TotalEnergy
 
 
-class LJ_potential(pp.ModuleBase):
+class LennardJonesPotential(pp.ModuleBase):
     # Module Construct --------------------------------------------------------
     def __init__(self):
         """
@@ -66,5 +66,5 @@ class LJ_potential(pp.ModuleBase):
     #--------------------------------------------------------------------------
 
 
-def load_Lenard_Jones_potential(mm):
-    mm.add_module("Lenard-Jones", LJ_potential())
+def load_lenard_jones_potential(mm):
+    mm.add_module("Lenard-Jones", LennardJonesPotential())

@@ -19,7 +19,7 @@ import unittest
 from simde import TotalEnergy
 
 
-class Test_Lennard_jones_potential(unittest.TestCase):
+class TestLennardJonesPotential(unittest.TestCase):
 
     def test_lennard_jones_potential(self):
         result = self.mm.run_as(TotalEnergy(), "Lenard-Jones",
