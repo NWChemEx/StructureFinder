@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from .pyberny import load_pyberny_modules
-from .lj_potential.lennard_jones_potential_module import load_Lenard_Jones_potential
+from .lj_potential.lennard_jones_potential_module import load_lenard_jones_potential
 
 
 def load_modules(mm):
