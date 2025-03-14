@@ -20,6 +20,7 @@ import pluginplay as pp
 from simde import TotalEnergy
 import tensorwrapper as tw
 
+
 class LennardJonesPotential(pp.ModuleBase):
     # Module Construct --------------------------------------------------------
     def __init__(self):
