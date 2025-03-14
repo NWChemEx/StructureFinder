@@ -18,7 +18,7 @@
 import numpy as np
 import pluginplay as pp
 from simde import TotalEnergy
-
+import tensorwrapper as tw
 
 class LennardJonesPotential(pp.ModuleBase):
     # Module Construct --------------------------------------------------------
@@ -60,6 +60,7 @@ class LennardJonesPotential(pp.ModuleBase):
         DE_x = -24 * ((2 / r**13) - (1 / r**7))
         FC = -DE_x
         #----------------------------------------------------------------------
+        E = tw.Tensor(np.array(E))
         rv = self.results()
         return pt.wrap_results(rv, E)
 
