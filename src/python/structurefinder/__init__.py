@@ -21,4 +21,4 @@ def load_modules(mm):
     Loads the collection of all modules provided by StructureFinder.
     """
     load_pyberny_modules(mm)
-    load_Lenard_Jones_potential(mm)
+    load_lenard_jones_potential(mm)
