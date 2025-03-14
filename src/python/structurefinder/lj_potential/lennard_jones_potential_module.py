@@ -66,5 +66,5 @@ class LennardJonesPotential(pp.ModuleBase):
     #--------------------------------------------------------------------------
 
 
-def load_lenard_jones_potential(mm):
-    mm.add_module("Lenard-Jones", LennardJonesPotential())
+def load_lennard_jones_potential(mm):
+    mm.add_module("Lennard-Jones", LennardJonesPotential())

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from .pyberny import load_pyberny_modules
-from .lj_potential.lennard_jones_potential_module import load_lenard_jones_potential
+from .lj_potential.lennard_jones_potential_module import load_lennard_jones_potential
 
 
 def load_modules(mm):
@@ -21,4 +21,4 @@ def load_modules(mm):
     Loads the collection of all modules provided by StructureFinder.
     """
     load_pyberny_modules(mm)
-    load_lenard_jones_potential(mm)
+    load_lennard_jones_potential(mm)

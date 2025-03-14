@@ -22,7 +22,7 @@ from simde import TotalEnergy
 class TestLennardJonesPotential(unittest.TestCase):
 
     def test_lennard_jones_potential(self):
-        result = self.mm.run_as(TotalEnergy(), "Lenard-Jones",
+        result = self.mm.run_as(TotalEnergy(), "Lennard-Jones",
                                 chemist.ChemicalSystem(self.mol))
         self.assertEqual(result, -1.0)
 
