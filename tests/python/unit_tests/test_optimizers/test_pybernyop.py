@@ -14,6 +14,7 @@
 
 import structurefinder
 import nwchemex
+import numpy as np
 import pluginplay as pp
 import chemist
 import unittest
@@ -35,7 +36,8 @@ class Test_optimize_pyberny(unittest.TestCase):
         egy = mm.run_as(TotalEnergy(), "PyBerny",
                         chemist.ChemicalSystem(self.mol))
         print("Energy = " + str(egy))
-        self.assertAlmostEqual(egy, -1.117505879316, 10)
+        print(np.array(egy).item())
+        self.assertAlmostEqual(np.array(egy).item(), -1.117505879316, 10)
 
     def setUp(self):
         self.mol = chemist.Molecule()
