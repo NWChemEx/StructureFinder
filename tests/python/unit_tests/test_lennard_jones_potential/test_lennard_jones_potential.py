@@ -25,7 +25,7 @@ class TestLennardJonesPotential(unittest.TestCase):
     def test_lennard_jones_potential(self):
         result = self.mm.run_as(TotalEnergy(), "Lennard-Jones",
                                 chemist.ChemicalSystem(self.mol))
-        self.assertEqual(np.array(result), -1.0)
+        self.assertEqual(np.array(result).item(), -1.0)
 
     def setUp(self):
         self.mm = pp.ModuleManager()
