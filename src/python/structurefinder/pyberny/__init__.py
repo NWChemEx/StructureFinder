@@ -16,6 +16,7 @@ import pluginplay as pp
 from simde import EnergyNuclearGradientStdVectorD, TotalEnergy, MoleculeFromString
 from berny import Berny, geomlib
 import chemist
+import numpy as np
 
 
 class GeomoptViaPyberny(pp.ModuleBase):
@@ -70,7 +71,7 @@ class GeomoptViaPyberny(pp.ModuleBase):
                 EnergyNuclearGradientStdVectorD(), geom,
                 geom_points.as_point_set())
             print('Interim gradient: \n' + str(gradients) + '\n')
-            optimizer.send((energy, gradients))
+            optimizer.send((np.array(energy).item(), gradients))
 
         opt_geom = geom.molecule.nuclei
         print(

@@ -76,7 +76,7 @@ if("${BUILD_TESTING}")
         py_${PROJECT_NAME}
         "${${PROJECT_NAME}_PYTHON_TEST_DIR}/unit_tests/test_${PROJECT_NAME}.py"
         DEPENDS nwchemex
-        SUBMODULES simde chemist pluginplay parallelzone friendzone chemcache nwchemex
+        SUBMODULES simde chemist pluginplay parallelzone friendzone chemcache nwchemex tensorwrapper integrals scf nux
     )
 
 endif()
