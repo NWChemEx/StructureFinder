@@ -53,24 +53,9 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
         # print(optimized_geom)
 
        # Optimized energy is of type "float"
-        e = tw.Tensor(np.array(optimized_energy))
-        print(e)
-        rv = self.results()
-        return pt.wrap_results(rv, e)
-
-
-def load_backwardeulerfire_modules(mm):
-    mm.add_module("BackwardEulerFire",  GeomoptViaBackwardEulerFIRE())
-
-
-
-
 
 #-----------------------------------------------------------------------------------------------------------------
-
-class BE2_FIRE():
-    
-    def __init__(self,v0,h0,numbcycles):
+   def BE2_FIRE(self,v0,h0,numbcycles):
         
         #----------------------------------------------------------------------
         v_initial = np.array(v0)                   #<-- Initial Velocity
@@ -187,4 +172,19 @@ class BE2_FIRE():
         self.Nreset = Nreset
         self.min_force =min(norm_force)
         #----------------------------------------------------------------------
-        # END of code --------------------------------------------------------
+        
+
+        e = tw.Tensor(np.array(optimized_energy))
+        print(e)
+        rv = self.results()
+        return pt.wrap_results(rv, e)
+
+
+def load_backwardeulerfire_modules(mm):
+    mm.add_module("BackwardEulerFire",  GeomoptViaBackwardEulerFIRE())
+
+
+
+
+
+
