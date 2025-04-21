@@ -1,47 +1,93 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Apr 29 16:13:47 2024
+# Copyright 2023 NWChemEx-Project
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-@author: leothan
-"""
-
-# Imported modules
+import pluginplay as pp
+from simde import EnergyNuclearGradientStdVectorD, TotalEnergy, MoleculeFromString
+from berny import Berny, geomlib
+import chemist
 import numpy as np
-from LJ_potential import Lennard_Jones_Potential
+import tensorwrapper as tw
+
+class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
+
+    def __init__(self):
+        pp.ModuleBase.__init__(self)
+        self.satisfies_property_type(TotalEnergy())
+        self.description("Performs Backware Euler-FIRE optimization")
+        self.add_submodule(TotalEnergy(), "Energy")
+        self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
+        self.add_submodule(MoleculeFromString(), "StringConv")
+
+    def run_(self, inputs, submods):
+        pt = TotalEnergy()
+        mol, = pt.unwrap_inputs(inputs)
+        molecule = mol.molecule
+
+        # Convert Chemist Chemical System to XYZ
+        xyz = ""
+        xyz += (str(molecule.size()) + "\n\n")
+        for i in range(molecule.size()):
+            xyz += (molecule.at(i).name + " " + str(molecule.at(i).x) + " " + str(molecule.at(i).y) + " " + str(molecule.at(i).z) + "\n")
+
+        # def e_func(geom):
+        #     return submods["Energy"].run_as(TotalEnergy(), geom)
+        
+        # def grad_func(geom):
+        #     return submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom, geom_points.as_point_set())
+
+        # Loads the geometry string into the Berny optimizer
+        # object.
+        # optimizer = BE2_FIRE(settings)
+        # optimized_energy, optimized_geom = optimizer.optimize(xyz, e_func, grad_func)
+        # print(optimized_geom)
+
+       # Optimized energy is of type "float"
+        e = tw.Tensor(np.array(optimized_energy))
+        print(e)
+        rv = self.results()
+        return pt.wrap_results(rv, e)
+
+
+def load_backwardeulerfire_modules(mm):
+    mm.add_module("BackwardEulerFire",  GeomoptViaBackwardEulerFIRE())
+
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------------
 
 class BE2_FIRE():
     
-    def __init__(self,r0,h0):
+    def __init__(self,v0,h0,numbcycles):
         
-        #---- DATA INITIALIZAION ---------------------------------------------
-        r0 = np.array([r0])
-        POS = [r0]                                       #<-- Position list
-        MIN = -1                                       #<-- Energy minimum
-        pos_minima = 2**(1/6)                 #<-- Position minimum
-        h = h0                                         #<-- Time step
-        #---------------------------------------------------------------------
-        E0 = Lennard_Jones_Potential(r0).LJ_energy #<-- Initial Energy
-        E = [E0]
-        #---------------------------------------------------------------------
-        F0  = Lennard_Jones_Potential(r0).force_cart #<-- Initial Force
-        F = [F0]                                           #<-- Forces List
-        norm_force = [ np.linalg.norm(F[0])]
         #----------------------------------------------------------------------
-        v0  = np.array(0)                              #<-- Initial Velocity
-        VEL = [v0]                                         #<-- Velocity list
+        v_initial = np.array(v0)                   #<-- Initial Velocity
+        VEL = [v_initial]                          #<-- Velocity list
         #----------------------------------------------------------------------
-        Ncycle = 1000
+        h = h0                                     #<-- Time step
+        #----------------------------------------------------------------------
+        #----- Optimization cycle parameters ----------------------------------
+        Ncycle = numbcycles
         Np = 0
         Nreset = 0
-        #---------------------------------------------------------------------
+        #------FIRE parameters -----------------------------------------------
         alpha = 0.1
         t_max = 0.3
-        #---------------------------------------------------------------------
-        
-        k=0
-        i=0
-        Nreset = 0
+        #------Counters ------------------------------------------------------
+        k=0                                   #<-- Convergence cycles
+        i=0                                   #<-- numpy array counter
         #----------------------------------------------------------------------
         while k < (Ncycle):
             k = k + 1
@@ -55,7 +101,7 @@ class BE2_FIRE():
             #----- FIRE ------------------------------------------------------
             #---- alpha RESET and Half time step setting ---------------------
             if  np.dot(VEL[i],F[i])<=0:
-                VEL[i] = v0
+                VEL[i] = v_initial
                 h = 0.5*h
                 alpha = 0.1
                 Np = 0
