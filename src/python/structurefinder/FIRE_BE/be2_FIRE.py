@@ -34,11 +34,15 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
         mol, = pt.unwrap_inputs(inputs)
         molecule = mol.molecule
 
-        # Convert Chemist Chemical System to XYZ
-        xyz = ""
-        xyz += (str(molecule.size()) + "\n\n")
+        # Construction of the coordinate vecotr
+        numb_atoms = molecule.size()  #<-- Number of atoms
+        numb_coord = 3*numb_atoms     #<-- Number of coordinates
+        R_xyz = np.zeros(numb_atoms)  #<-- Initializing the coordiantes vector
         for i in range(molecule.size()):
-            xyz += (molecule.at(i).name + " " + str(molecule.at(i).x) + " " + str(molecule.at(i).y) + " " + str(molecule.at(i).z) + "\n")
+            for j in range(numb_coord):
+                R_xyz[j]   = molecule.at(i).x
+                R_xyz[j+1] = molecule.at(i).y
+                R_xyz[j+2] = molecule.at(i).z
 
         # def e_func(geom):
         #     return submods["Energy"].run_as(TotalEnergy(), geom)
@@ -55,7 +59,7 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
        # Optimized energy is of type "float"
 
 #-----------------------------------------------------------------------------------------------------------------
-   def BE2_FIRE(self,v0,h0,numbcycles):
+   def BE2_FIRE(self,v0 = 0,h0 = 0.03, alpha = 0.1, t_max=0.3, numbcycles=1000, error = 10**(-8)):
         
         #----------------------------------------------------------------------
         v_initial = np.array(v0)                   #<-- Initial Velocity
@@ -68,8 +72,9 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
         Np = 0
         Nreset = 0
         #------FIRE parameters -----------------------------------------------
-        alpha = 0.1
-        t_max = 0.3
+        alpha = alpha
+        t_max = t_max
+        error = error
         #------Counters ------------------------------------------------------
         k=0                                   #<-- Convergence cycles
         i=0                                   #<-- numpy array counter
@@ -81,7 +86,7 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
             down_pos_norm_error = np.linalg.norm(POS[0]-MIN)
             pos_norm_error = (up_pos_norm_error/down_pos_norm_error)
             #------------------------------------------------------------------
-            if pos_norm_error < 10**(-8):
+            if pos_norm_error < error:
                 break
             #----- FIRE ------------------------------------------------------
             #---- alpha RESET and Half time step setting ---------------------
@@ -130,13 +135,13 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
             E[i+1] = Lennard_Jones_Potential(POS[i+1]).LJ_energy
                         
             #-------------- NORMALIZED ENERGY ERROR CONVERGENCE ---------------            
-            if abs(E[i+1]-MIN)/abs(E[0]-MIN) < 10**(-8):
+            if abs(E[i+1]-MIN)/abs(E[0]-MIN) < error:
                 
                 break
             #------------------------------------------------------------------
             
             #------------- NORM OF FORCE CONVERGENCE --------------------------
-            if np.linalg.norm(F[i+1])<10**(-8):
+            if np.linalg.norm(F[i+1])< error:
                 
                 break
             #------------------------------------------------------------------         
