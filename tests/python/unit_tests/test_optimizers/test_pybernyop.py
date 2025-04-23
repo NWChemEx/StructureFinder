@@ -26,21 +26,25 @@ class Test_optimize_pyberny(unittest.TestCase):
         mm = pp.ModuleManager()
         nwchemex.load_modules(mm)
         structurefinder.load_modules(mm)
-        mm.change_input("NWChem : SCF", "basis set", "sto-3g")
-        mm.change_input("NWChem : SCF Gradient", "basis set", "sto-3g")
-        mm.change_submod("PyBerny", "Gradient", "NWChem : SCF Gradient")
-        mm.change_submod("PyBerny", "Energy", "NWChem : SCF")
-        mm.change_submod("Pyberny", "StringConv", "ChemicalSystem via QCElemental")
-        egy = mm.run_as(
-            TotalEnergyNuclearOptimization(),
-            "PyBerny",
-            chemist.ChemicalSystem(self.mol),
-        )
-        print("Energy = " + str(egy))
-        print(np.array(egy).item())
-        self.assertAlmostEqual(np.array(egy).item(), -1.117505879316, 10)
+        pyberny_mod = mm.at("PyBerny")
+        nwchem_scf_mod = mm.at("NWChem : SCF")
+        nwchem_grad_mod = mm.at("NWChem : SCF Gradient")
+        string_conv_mod = mm.at("ChemicalSystem via QCElemental")
+
+        nwchem_scf_mod.change_input("basis set", "sto-3g")
+        nwchem_grad_mod.change_input("basis set", "sto-3g")
+        pyberny_mod.change_submod("Energy", nwchem_scf_mod)
+        pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
+        pyberny_mod.change_submod("StringConv", string_conv_mod)
+        egy = pyberny_mod.run_as(TotalEnergyNuclearOptimization(),
+                                 self.sys,
+                                 self.point_set)
+        self.assertAlmostEqual(np.array(egy[0]).item(), -1.117505879316, 10)
 
     def setUp(self):
         self.mol = chemist.Molecule()
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 0.0))
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 1.0))
+        self.sys = chemist.ChemicalSystem(self.mol)
+        self.nuclei = self.mol.nuclei.as_nuclei()
+        self.point_set = self.nuclei.charges.point_set.as_point_set()
