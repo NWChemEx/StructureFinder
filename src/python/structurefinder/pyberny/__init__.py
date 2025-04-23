@@ -69,11 +69,9 @@ class GeomoptViaPyberny(pp.ModuleBase):
 
         opt_geom_nuclei = geom.molecule.nuclei.as_nuclei()
         opt_geom_points = opt_geom_nuclei.charges.point_set.as_point_set()
-        # Optimized energy is of type "float"
-        e = energy
-        print(e)
+
         rv = self.results()
-        return pt.wrap_results(rv, e, opt_geom_points)
+        return pt.wrap_results(rv, energy, opt_geom_points)
 
 
 def load_pyberny_modules(mm):
