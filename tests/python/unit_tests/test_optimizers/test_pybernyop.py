@@ -18,11 +18,10 @@ import numpy as np
 import pluginplay as pp
 import chemist
 import unittest
-from simde import TotalEnergy
+from simde import TotalEnergyNuclearOptimization
 
 
 class Test_optimize_pyberny(unittest.TestCase):
-
     def test_optimize_pyberny(self):
         mm = pp.ModuleManager()
         nwchemex.load_modules(mm)
@@ -31,10 +30,12 @@ class Test_optimize_pyberny(unittest.TestCase):
         mm.change_input("NWChem : SCF Gradient", "basis set", "sto-3g")
         mm.change_submod("PyBerny", "Gradient", "NWChem : SCF Gradient")
         mm.change_submod("PyBerny", "Energy", "NWChem : SCF")
-        mm.change_submod("Pyberny", "StringConv",
-                         "ChemicalSystem via QCElemental")
-        egy = mm.run_as(TotalEnergy(), "PyBerny",
-                        chemist.ChemicalSystem(self.mol))
+        mm.change_submod("Pyberny", "StringConv", "ChemicalSystem via QCElemental")
+        egy = mm.run_as(
+            TotalEnergyNuclearOptimization(),
+            "PyBerny",
+            chemist.ChemicalSystem(self.mol),
+        )
         print("Energy = " + str(egy))
         print(np.array(egy).item())
         self.assertAlmostEqual(np.array(egy).item(), -1.117505879316, 10)
