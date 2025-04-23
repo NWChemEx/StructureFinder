@@ -22,6 +22,7 @@ from simde import TotalEnergyNuclearOptimization
 
 
 class Test_optimize_pyberny(unittest.TestCase):
+
     def test_optimize_pyberny(self):
         mm = pp.ModuleManager()
         nwchemex.load_modules(mm)
@@ -36,8 +37,7 @@ class Test_optimize_pyberny(unittest.TestCase):
         pyberny_mod.change_submod("Energy", nwchem_scf_mod)
         pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
         pyberny_mod.change_submod("StringConv", string_conv_mod)
-        egy = pyberny_mod.run_as(TotalEnergyNuclearOptimization(),
-                                 self.sys,
+        egy = pyberny_mod.run_as(TotalEnergyNuclearOptimization(), self.sys,
                                  self.point_set)
         self.assertAlmostEqual(np.array(egy[0]).item(), -1.117505879316, 10)
 
