@@ -20,7 +20,7 @@ import chemist
 import unittest
 from simde import TotalEnergyNuclearOptimization
 
-def threed_distance(coords):
+def diatomic_bond_distance(coords):
     val = 0
     for i in range(int(len(coords) / 2)):
         val += (coords[i] - coords[i + 3]) ** 2
@@ -45,18 +45,17 @@ class Test_optimize_pyberny(unittest.TestCase):
         pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
         pyberny_mod.change_submod("StringConv", string_conv_mod)
 
-        egy = pyberny_mod.run_as(TotalEnergyNuclearOptimization(), self.sys,
+        energy, points = pyberny_mod.run_as(TotalEnergyNuclearOptimization(), self.sys,
                                  self.point_set_i)
 
-        energy = np.array(egy[0]).item()
-        point_set = egy[1]
         coords = []
-        for atom in range(point_set.size()):
+        for atom in range(points.size()):
             for coord in range(3):
-                coords.append(point_set.at(atom).coord(coord))
+                coords.append(points.at(atom).coord(coord))
 
-        distance = threed_distance(coords)
+        distance = diatomic_bond_distance(coords)
 
+        energy = np.array(energy).item()
         self.assertAlmostEqual(energy, self.energy, 10)
         self.assertAlmostEqual(distance, self.distance, 8)
 

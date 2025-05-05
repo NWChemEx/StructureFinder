@@ -42,9 +42,11 @@ class GeomoptViaPyberny(pp.ModuleBase):
         # Convert Chemist Chemical System to XYZ
         xyz = ""
         xyz += str(molecule.size()) + "\n\n"
-        for i in range(molecule.size()):
-            xyz += (molecule.at(i).name + " " + str(molecule.at(i).x) + " " +
-                    str(molecule.at(i).y) + " " + str(molecule.at(i).z) + "\n")
+
+        #TODO ensure points == molecule.nuclei.charges.point_set
+        for i in range(points.size()):
+            xyz += (molecule.at(i).name + " " + str(points.at(i).x) + " " +
+                    str(points.at(i).y) + " " + str(points.at(i).z) + "\n")
 
         # Loads the geometry string into the Berny optimizer
         # object.
