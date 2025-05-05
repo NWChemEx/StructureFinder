@@ -20,6 +20,7 @@ import chemist
 import unittest
 from simde import TotalEnergyNuclearOptimization
 
+
 def diatomic_bond_distance(coords):
     val = 0
     for i in range(int(len(coords) / 2)):
@@ -46,8 +47,8 @@ class Test_optimize_pyberny(unittest.TestCase):
         pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
         pyberny_mod.change_submod("StringConv", string_conv_mod)
 
-        energy, points = pyberny_mod.run_as(TotalEnergyNuclearOptimization(), self.sys,
-                                 self.point_set_i)
+        energy, points = pyberny_mod.run_as(TotalEnergyNuclearOptimization(),
+                                            self.sys, self.point_set_i)
 
         coords = []
         for atom in range(points.size()):
