@@ -13,7 +13,12 @@
 # limitations under the License.
 
 import pluginplay as pp
-from simde import EnergyNuclearGradientStdVectorD, TotalEnergy, MoleculeFromString
+from simde import (
+    EnergyNuclearGradientStdVectorD,
+    TotalEnergyNuclearOptimization,
+    MoleculeFromString,
+    TotalEnergy,
+)
 from berny import Berny, geomlib
 import chemist
 import numpy as np
@@ -23,65 +28,52 @@ class GeomoptViaPyberny(pp.ModuleBase):
 
     def __init__(self):
         pp.ModuleBase.__init__(self)
-        self.satisfies_property_type(TotalEnergy())
+        self.satisfies_property_type(TotalEnergyNuclearOptimization())
         self.description("Performs PyBerny optimization")
         self.add_submodule(TotalEnergy(), "Energy")
         self.add_submodule(EnergyNuclearGradientStdVectorD(), "Gradient")
         self.add_submodule(MoleculeFromString(), "StringConv")
 
     def run_(self, inputs, submods):
-        pt = TotalEnergy()
-        mol, = pt.unwrap_inputs(inputs)
-        molecule = mol.molecule
+        pt = TotalEnergyNuclearOptimization()
+        sys, points = pt.unwrap_inputs(inputs)
+        molecule = sys.molecule
 
         # Convert Chemist Chemical System to XYZ
         xyz = ""
-        xyz += (str(molecule.size()) + "\n\n")
-        for i in range(molecule.size()):
-            xyz += (molecule.at(i).name + " " + str(molecule.at(i).x) + " " +
-                    str(molecule.at(i).y) + " " + str(molecule.at(i).z) + "\n")
+        xyz += str(molecule.size()) + "\n\n"
+
+        #TODO ensure points == molecule.nuclei.charges.point_set
+        for i in range(points.size()):
+            xyz += (molecule.at(i).name + " " + str(points.at(i).x) + " " +
+                    str(points.at(i).y) + " " + str(points.at(i).z) + "\n")
 
         # Loads the geometry string into the Berny optimizer
         # object.
-        optimizer = Berny(geomlib.loads(xyz, fmt='xyz'))
+        optimizer = Berny(geomlib.loads(xyz, fmt="xyz"))
 
         for geom in optimizer:
-
             # Converts the "Berny" geometry object to Chemical System
-            geom2xyz = geom.dumps('xyz')
-            print('Berny Geom to XYZ value: \n' + geom2xyz + '\n')
-            lines = geom2xyz.split('\n')
-            print('Lines of geom2xyz: \n' + str(lines) + '\n')
-            mol_string = '\n'.join(lines[2:])
-            print('Lines to string: \n' + mol_string + '\n')
+            geom2xyz = geom.dumps("xyz")
+            lines = geom2xyz.split("\n")
+            mol_string = "\n".join(lines[2:])
             xyz2chem_mol = submods["StringConv"].run_as(
                 MoleculeFromString(), mol_string)
-            print('String conversion from xyz to chem sys: \n' +
-                  str(xyz2chem_mol.nuclei) + '\n')
             geom = chemist.ChemicalSystem(xyz2chem_mol)
-            print('Chemical system of xyz2chem_mol: \n' +
-                  str(geom.molecule.nuclei) + '\n')
             geom_nuclei = geom.molecule.nuclei.as_nuclei()
-            geom_points = geom_nuclei.charges.point_set
+            geom_points = geom_nuclei.charges.point_set.as_point_set()
 
             # Main optimizer operation
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
-            print('Interim energy: \n' + str(energy) + '\n')
             gradients = submods["Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom,
-                geom_points.as_point_set())
-            print('Interim gradient: \n' + str(gradients) + '\n')
+                EnergyNuclearGradientStdVectorD(), geom, geom_points)
             optimizer.send((np.array(energy).item(), gradients))
 
-        opt_geom = geom.molecule.nuclei
-        print(
-            'Resulting relaxed geometry (assigned to variable opt_geom): \n' +
-            str(opt_geom))
-        # Optimized energy is of type "float"
-        e = energy
-        print(e)
+        opt_geom_nuclei = geom.molecule.nuclei.as_nuclei()
+        opt_geom_points = opt_geom_nuclei.charges.point_set.as_point_set()
+
         rv = self.results()
-        return pt.wrap_results(rv, e)
+        return pt.wrap_results(rv, energy, opt_geom_points)
 
 
 def load_pyberny_modules(mm):
