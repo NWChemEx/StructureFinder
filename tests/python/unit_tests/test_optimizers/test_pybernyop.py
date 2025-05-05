@@ -23,9 +23,10 @@ from simde import TotalEnergyNuclearOptimization
 def diatomic_bond_distance(coords):
     val = 0
     for i in range(int(len(coords) / 2)):
-        val += (coords[i] - coords[i + 3]) ** 2
+        val += (coords[i] - coords[i + 3])**2
     distance = np.sqrt(val)
     return distance
+
 
 class Test_optimize_pyberny(unittest.TestCase):
 
