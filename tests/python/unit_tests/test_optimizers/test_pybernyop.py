@@ -20,6 +20,12 @@ import chemist
 import unittest
 from simde import TotalEnergyNuclearOptimization
 
+def threed_distance(coords):
+    val = 0
+    for i in range(int(len(coords) / 2)):
+        val += (coords[i] - coords[i + 3]) ** 2
+    distance = np.sqrt(val)
+    return distance
 
 class Test_optimize_pyberny(unittest.TestCase):
 
@@ -27,6 +33,7 @@ class Test_optimize_pyberny(unittest.TestCase):
         mm = pp.ModuleManager()
         nwchemex.load_modules(mm)
         structurefinder.load_modules(mm)
+
         pyberny_mod = mm.at("PyBerny")
         nwchem_scf_mod = mm.at("NWChem : SCF")
         nwchem_grad_mod = mm.at("NWChem : SCF Gradient")
@@ -37,9 +44,21 @@ class Test_optimize_pyberny(unittest.TestCase):
         pyberny_mod.change_submod("Energy", nwchem_scf_mod)
         pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
         pyberny_mod.change_submod("StringConv", string_conv_mod)
+
         egy = pyberny_mod.run_as(TotalEnergyNuclearOptimization(), self.sys,
-                                 self.point_set)
-        self.assertAlmostEqual(np.array(egy[0]).item(), -1.117505879316, 10)
+                                 self.point_set_i)
+
+        energy = np.array(egy[0]).item()
+        point_set = egy[1]
+        coords = []
+        for atom in range(point_set.size()):
+            for coord in range(3):
+                coords.append(point_set.at(atom).coord(coord))
+
+        distance = threed_distance(coords)
+
+        self.assertAlmostEqual(energy, self.energy, 10)
+        self.assertAlmostEqual(distance, self.distance, 8)
 
     def setUp(self):
         self.mol = chemist.Molecule()
@@ -47,4 +66,6 @@ class Test_optimize_pyberny(unittest.TestCase):
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 1.0))
         self.sys = chemist.ChemicalSystem(self.mol)
         self.nuclei = self.mol.nuclei.as_nuclei()
-        self.point_set = self.nuclei.charges.point_set.as_point_set()
+        self.point_set_i = self.nuclei.charges.point_set.as_point_set()
+        self.distance = 1.34606231
+        self.energy = -1.117505879316
