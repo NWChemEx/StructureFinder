@@ -14,7 +14,7 @@
 
 from .pyberny import load_pyberny_modules
 from .lj_potential.lennard_jones_potential_module import load_lennard_jones_potential
-
+from .fire.backward_euler import load_backwardeulerfire_modules
 
 def load_modules(mm):
     """
@@ -22,3 +22,4 @@ def load_modules(mm):
     """
     load_pyberny_modules(mm)
     load_lennard_jones_potential(mm)
+    load_backwardeulerfire_modules(mm)
