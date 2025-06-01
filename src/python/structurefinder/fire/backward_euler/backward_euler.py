@@ -14,7 +14,6 @@
 
 import pluginplay as pp
 from simde import (EnergyNuclearGradientStdVectorD, TotalEnergy,TotalEnergyNuclearOptimization, MoleculeFromString)
-from berny import Berny, geomlib
 import chemist
 import numpy as np
 import tensorwrapper as tw
@@ -31,19 +30,20 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
 
     def run_(self, inputs, submods):
         pt = TotalEnergyNuclearOptimization()
-        mol, = pt.unwrap_inputs(inputs)
+        mol, points = pt.unwrap_inputs(inputs)
         molecule = mol.molecule
 
         # Construction of the coordinate vecotr
-        # numb_atoms = molecule.size()  #<-- Number of atoms
-        # numb_coord = 3*numb_atoms     #<-- Number of coordinates
-        # R_xyz = np.zeros(numb_coord)  #<-- Initializing the coordiantes vector
-        # for i in range(molecule.size()):
-        #     for j in range(3):
-        #         R_xyz[j]   = molecule.at(i).x
-        #         R_xyz[j+1] = molecule.at(i).y
-        #         R_xyz[j+2] = molecule.at(i).z
-        # return R_xyz
+        numb_atoms = molecule.size()  #<-- Number of atoms
+        numb_coord = 3*numb_atoms     #<-- Number of coordinates
+        R_xyz = np.zeros(numb_coord)  #<-- Initializing the coordiantes vector
+        for i in range(molecule.size()):
+            for j in range(3):
+                R_xyz[j]   = molecule.at(i).x
+                R_xyz[j+1] = molecule.at(i).y
+                R_xyz[j+2] = molecule.at(i).z
+        print(R_xyz)
+        
         # def e_func(geom):
         #     return submods["Energy"].run_as(TotalEnergy(), geom)
         
@@ -179,7 +179,7 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
 #         #----------------------------------------------------------------------
         
 
-        e = tw.Tensor(np.array(0))
+        e = tw.Tensor(np.array([0.0],[0.0]))
         ps = chemist.PointSetD()
         ps.push_back(chemist.PointD(1.0,2.0,3.0))
         #       print(e)
