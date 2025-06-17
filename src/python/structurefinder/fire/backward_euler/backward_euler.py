@@ -179,7 +179,7 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
 #         #----------------------------------------------------------------------
         
 
-        e = tw.Tensor(np.array([0.0],[0.0]))
+        e = tw.Tensor(np.array([0.0]))
         ps = chemist.PointSetD()
         ps.push_back(chemist.PointD(1.0,2.0,3.0))
         #       print(e)
