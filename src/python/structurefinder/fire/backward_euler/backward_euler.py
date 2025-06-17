@@ -41,17 +41,30 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
             R_xyz[3*i_atom]   = molecule.at(i_atom).x
             R_xyz[3*i_atom + 1] = molecule.at(i_atom).y
             R_xyz[3*i_atom + 2] = molecule.at(i_atom).z
-        print(list(R_xyz))
+        # print(list(R_xyz))
+        # molecule.at(0).x = 110
+        # print(molecule)
+
+        def nwchemex_molecule(R_xyz):           
+            for i_atom in range(R_xyz):
+                molecule.at(i_atom).x = R_xyz[3*i_atom]  
+                molecule.at(i_atom).y = R_xyz[3*i_atom + 1] 
+                molecule.at(i_atom).z = R_xyz[3*i_atom + 2]
+            return molecule
         
         def e_func(geom):
-            return submods["Energy"].run_as(TotalEnergy(), geom)
+            current_molecule = nwchemex_molecule(geom)
+            return submods["Energy"].run_as(TotalEnergy(), current_molecule)
     
         def grad_func(geom):
-            return submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom, geom_points.as_point_set())
+            current_molecule = nwchemex_molecule(geom)
+            current_points = current_molecule.nuclei.as_nuclei().charges.point_set.as_point_set()
+            return submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), current_molecule, current_points)
 
-        #Loads the geometry string into the Berny optimizer object.
-        optimizer = BE2_FIRE(settings)
-        optimized_energy, optimized_geom = optimizer.optimize(xyz, e_func, grad_func)
+        
+        # #Loads the geometry string into the Berny optimizer object.
+        # optimizer = BE2_FIRE(settings)
+        # optimized_energy, optimized_geom = optimizer.optimize(xyz, e_func, grad_func)
         #print(optimized_geom)
 
     # Optimized energy is of type "float"
