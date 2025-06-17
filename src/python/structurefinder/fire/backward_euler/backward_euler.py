@@ -37,26 +37,24 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
         numb_atoms = molecule.size()  #<-- Number of atoms
         numb_coord = 3*numb_atoms     #<-- Number of coordinates
         R_xyz = np.zeros(numb_coord)  #<-- Initializing the coordiantes vector
-        for i in range(molecule.size()):
-            for j in range(3):
-                R_xyz[j]   = molecule.at(i).x
-                R_xyz[j+1] = molecule.at(i).y
-                R_xyz[j+2] = molecule.at(i).z
-        print(R_xyz)
+        for i_atom in range(molecule.size()):
+            R_xyz[3*i_atom]   = molecule.at(i_atom).x
+            R_xyz[3*i_atom + 1] = molecule.at(i_atom).y
+            R_xyz[3*i_atom + 2] = molecule.at(i_atom).z
+        print(list(R_xyz))
         
-        # def e_func(geom):
-        #     return submods["Energy"].run_as(TotalEnergy(), geom)
-        
-        # def grad_func(geom):
-        #     return submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom, geom_points.as_point_set())
+        def e_func(geom):
+            return submods["Energy"].run_as(TotalEnergy(), geom)
+    
+        def grad_func(geom):
+            return submods["Gradient"].run_as(EnergyNuclearGradientStdVectorD(), geom, geom_points.as_point_set())
 
-        # Loads the geometry string into the Berny optimizer
-        # object.
-        # optimizer = BE2_FIRE(settings)
-        # optimized_energy, optimized_geom = optimizer.optimize(xyz, e_func, grad_func)
-        # print(optimized_geom)
+        #Loads the geometry string into the Berny optimizer object.
+        optimizer = BE2_FIRE(settings)
+        optimized_energy, optimized_geom = optimizer.optimize(xyz, e_func, grad_func)
+        #print(optimized_geom)
 
-       # Optimized energy is of type "float"
+    # Optimized energy is of type "float"
 
 #-----------------------------------------------------------------------------------------------------------------
 #    def BE2_FIRE(self,v0 = 0,h0 = 0.03, alpha = 0.1, t_max=0.3, numbcycles=1000, error = 10**(-8)):
@@ -181,8 +179,8 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
 
         e = tw.Tensor(np.array([0.0]))
         ps = chemist.PointSetD()
-        ps.push_back(chemist.PointD(1.0,2.0,3.0))
-        #       print(e)
+        for i in range(numb_atoms):
+            ps.push_back(chemist.PointD(R_xyz[3*i],R_xyz[3*i + 1], R_xyz[3*i + 2]))
         rv = self.results()
         return pt.wrap_results(rv, e, ps)
 

@@ -21,6 +21,17 @@ from simde import TotalEnergyNuclearOptimization
 import numpy as np
 import tensorwrapper as tw
 
+def print_pointset(pointset):
+    printout = ' '
+    for i in range(pointset.size()):
+        printout+= '['
+        for j in range(3):
+            printout+= str(pointset.at(i).coord(j)) + ' '
+        printout+= ']'
+    print(printout)
+
+
+
 
 class Test_TotalEnergyNuclearOptimization(unittest.TestCase):
 
@@ -37,7 +48,8 @@ class Test_TotalEnergyNuclearOptimization(unittest.TestCase):
         egy, pts = mm.run_as(TotalEnergyNuclearOptimization(), "BackwardEulerFire",
                        self.sys, self.pointset)
         print("Energy = " + str(egy))
-        print(pts)
+        print_pointset(pts)
+        # print(pts) <-- chemist types missing python string representation
         #self.assertAlmostEqual(np.array(egy), -1.117505879316, 10)
 
     def setUp(self):
