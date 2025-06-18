@@ -14,12 +14,19 @@
 
 import structurefinder
 import nwchemex
+import numpy as np
 import pluginplay as pp
 import chemist
 import unittest
-from simde import TotalEnergy
-import numpy as np
-import tensorwrapper as tw
+from simde import TotalEnergyNuclearOptimization
+
+
+def diatomic_bond_distance(coords):
+    val = 0
+    for i in range(int(len(coords) / 2)):
+        val += (coords[i] - coords[i + 3])**2
+    distance = np.sqrt(val)
+    return distance
 
 
 class Test_optimize_pyberny(unittest.TestCase):
@@ -28,18 +35,38 @@ class Test_optimize_pyberny(unittest.TestCase):
         mm = pp.ModuleManager()
         nwchemex.load_modules(mm)
         structurefinder.load_modules(mm)
-        mm.change_input("NWChem : SCF", "basis set", "sto-3g")
-        mm.change_input("NWChem : SCF Gradient", "basis set", "sto-3g")
-        mm.change_submod("PyBerny", "Gradient", "NWChem : SCF Gradient")
-        mm.change_submod("PyBerny", "Energy", "NWChem : SCF")
-        mm.change_submod("Pyberny", "StringConv",
-                         "ChemicalSystem via QCElemental")
-        egy = mm.run_as(TotalEnergy(), "PyBerny",
-                        chemist.ChemicalSystem(self.mol))
-        print("Energy = " + str(egy))
-        self.assertAlmostEqual(np.array(egy), -1.117505879316, 10)
+
+        pyberny_mod = mm.at("PyBerny")
+        nwchem_scf_mod = mm.at("NWChem : SCF")
+        nwchem_grad_mod = mm.at("NWChem : SCF Gradient")
+        string_conv_mod = mm.at("ChemicalSystem via QCElemental")
+
+        nwchem_scf_mod.change_input("basis set", "sto-3g")
+        nwchem_grad_mod.change_input("basis set", "sto-3g")
+        pyberny_mod.change_submod("Energy", nwchem_scf_mod)
+        pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
+        pyberny_mod.change_submod("StringConv", string_conv_mod)
+
+        energy, points = pyberny_mod.run_as(TotalEnergyNuclearOptimization(),
+                                            self.sys, self.point_set_i)
+
+        coords = []
+        for atom in range(points.size()):
+            for coord in range(3):
+                coords.append(points.at(atom).coord(coord))
+
+        distance = diatomic_bond_distance(coords)
+
+        energy = np.array(energy).item()
+        self.assertAlmostEqual(energy, self.energy, 10)
+        self.assertAlmostEqual(distance, self.distance, 8)
 
     def setUp(self):
         self.mol = chemist.Molecule()
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 0.0))
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 1.0))
+        self.sys = chemist.ChemicalSystem(self.mol)
+        self.nuclei = self.mol.nuclei.as_nuclei()
+        self.point_set_i = self.nuclei.charges.point_set.as_point_set()
+        self.distance = 1.34606231
+        self.energy = -1.117505879316
