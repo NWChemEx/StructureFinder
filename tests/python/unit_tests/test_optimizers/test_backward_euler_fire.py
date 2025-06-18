@@ -51,7 +51,7 @@ class Test_TotalEnergyNuclearOptimization(unittest.TestCase):
         print_pointset(pts)
         print(self.sys.molecule)
         # print(pts) <-- chemist types missing python string representation
-        #self.assertAlmostEqual(np.array(egy), -1.117505879316, 10)
+        #self.assertAlmostEqual(np.array(egy).item(), -1.117505879316, 10)
 
     def setUp(self):
         self.mol = chemist.Molecule()
