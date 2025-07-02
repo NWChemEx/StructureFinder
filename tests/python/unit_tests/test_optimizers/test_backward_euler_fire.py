@@ -49,14 +49,14 @@ class Test_TotalEnergyNuclearOptimization(unittest.TestCase):
                        self.sys, self.pointset)
         print("Energy = " + str(egy))
         print_pointset(pts)
-        print(self.sys.molecule)
+        #print(self.sys.molecule)
         # print(pts) <-- chemist types missing python string representation
         #self.assertAlmostEqual(np.array(egy).item(), -1.117505879316, 10)
 
     def setUp(self):
         self.mol = chemist.Molecule()
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 0.0))
-        self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 1.0))
+        self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 1.4))
         self.sys = chemist.ChemicalSystem(self.mol)
         self.nuclei = self.mol.nuclei.as_nuclei()
         self.pointset = self.nuclei.charges.point_set.as_point_set()

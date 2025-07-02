@@ -14,7 +14,10 @@
 
 __pycache__/
 build/
-venv/
+.venv/
 install/
 toolchain.cmake
-.vscode/
+.vscode/*
+!.vscode/settings.json
+StructureFinder.code-workspace
+
