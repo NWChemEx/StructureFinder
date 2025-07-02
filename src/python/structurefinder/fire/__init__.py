@@ -1,4 +1,4 @@
-# Copyright 2024 NWChemEx Community
+# Copyright 2025 NWChemEx Community
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,12 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-__pycache__/
-build/
-.venv/
-install/
-toolchain.cmake
-.vscode/
-StructureFinder.code-workspace
-
