@@ -1,8 +1,0 @@
-{
-  "cmake.configureOnOpen": false,
-  "cmake.buildDirectory": "${workspaceFolder}/build",
-  "cmake.sourceDirectory": "${workspaceFolder}",
-  "cmake.generator": "Ninja",
-  "cmake.buildOnSave": false,
-  "cmake.configureOnEdit": false
-}

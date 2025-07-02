@@ -17,7 +17,6 @@ build/
 .venv/
 install/
 toolchain.cmake
-.vscode/*
-!.vscode/settings.json
+.vscode/
 StructureFinder.code-workspace
 
