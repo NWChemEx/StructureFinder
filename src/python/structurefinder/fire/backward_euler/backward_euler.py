@@ -93,7 +93,6 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
 
     # Optimized energy is of type "float"
 
-
 #-----------------------------------------------------------------------------------------------------------------
 
         def backwardeuler_FIRE(molecule,
