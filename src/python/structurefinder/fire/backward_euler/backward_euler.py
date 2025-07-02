@@ -206,6 +206,10 @@ class GeomoptViaBackwardEulerFIRE(pp.ModuleBase):
                 force_error = np.linalg.norm(FORCE[i] - FORCE[i + 1])
                 force_error_list.append(force_error)
 
+                #--- LIST OF COORDINATES
+                mol_string = create_coord_string(molecule)
+                coord_list.append(mol_string)
+
                 if (Rxyz_error < error) and (egy_error
                                              < error) and (force_error
                                                            < error):
