@@ -12,25 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import structurefinder
-import nwchemex
-import numpy as np
-import pluginplay as pp
-import chemist
 import unittest
+
+import chemist
+import numpy as np
+import nwchemex
+import pluginplay as pp
+import structurefinder
 from simde import TotalEnergyNuclearOptimization
 
 
 def diatomic_bond_distance(coords):
     val = 0
     for i in range(int(len(coords) / 2)):
-        val += (coords[i] - coords[i + 3])**2
+        val += (coords[i] - coords[i + 3]) ** 2
     distance = np.sqrt(val)
     return distance
 
 
 class Test_optimize_pyberny(unittest.TestCase):
-
     def test_optimize_pyberny(self):
         mm = pp.ModuleManager()
         nwchemex.load_modules(mm)
@@ -47,8 +47,9 @@ class Test_optimize_pyberny(unittest.TestCase):
         pyberny_mod.change_submod("Gradient", nwchem_grad_mod)
         pyberny_mod.change_submod("StringConv", string_conv_mod)
 
-        energy, points = pyberny_mod.run_as(TotalEnergyNuclearOptimization(),
-                                            self.sys, self.point_set_i)
+        energy, points = pyberny_mod.run_as(
+            TotalEnergyNuclearOptimization(), self.sys, self.point_set_i
+        )
 
         coords = []
         for atom in range(points.size()):

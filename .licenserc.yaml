@@ -22,5 +22,6 @@ header:
     - LICENSE
     - version.txt
     - docs/source/nitpick_exceptions
+    - build/
 
   comment: never

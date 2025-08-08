@@ -11,20 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy as np
-import structurefinder
-import nwchemex
-import pluginplay as pp
-import chemist
 import unittest
+
+import chemist
+import numpy as np
+import pluginplay as pp
+import structurefinder
 from simde import TotalEnergy
 
 
 class TestLennardJonesPotential(unittest.TestCase):
-
     def test_lennard_jones_potential(self):
-        result = self.mm.run_as(TotalEnergy(), "Lennard-Jones",
-                                chemist.ChemicalSystem(self.mol))
+        result = self.mm.run_as(
+            TotalEnergy(), "Lennard-Jones", chemist.ChemicalSystem(self.mol)
+        )
         self.assertEqual(np.array(result).item(), -1.0)
 
     def setUp(self):
@@ -32,4 +32,6 @@ class TestLennardJonesPotential(unittest.TestCase):
         structurefinder.load_modules(self.mm)
         self.mol = chemist.Molecule()
         self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 0.0))
-        self.mol.push_back(chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 2**(1 / 6)))
+        self.mol.push_back(
+            chemist.Atom("H", 1, 1.0079, 0.0, 0.0, 2 ** (1 / 6))
+        )

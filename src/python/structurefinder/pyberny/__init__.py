@@ -12,20 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pluginplay as pp
-from simde import (
-    EnergyNuclearGradientStdVectorD,
-    TotalEnergyNuclearOptimization,
-    MoleculeFromString,
-    TotalEnergy,
-)
-from berny import Berny, geomlib
 import chemist
 import numpy as np
+import pluginplay as pp
+from berny import Berny, geomlib
+from simde import (
+    EnergyNuclearGradientStdVectorD,
+    MoleculeFromString,
+    TotalEnergy,
+    TotalEnergyNuclearOptimization,
+)
 
 
 class GeomoptViaPyberny(pp.ModuleBase):
-
     def __init__(self):
         pp.ModuleBase.__init__(self)
         self.satisfies_property_type(TotalEnergyNuclearOptimization())
@@ -43,10 +42,18 @@ class GeomoptViaPyberny(pp.ModuleBase):
         xyz = ""
         xyz += str(molecule.size()) + "\n\n"
 
-        #TODO ensure points == molecule.nuclei.charges.point_set
+        # TODO ensure points == molecule.nuclei.charges.point_set
         for i in range(points.size()):
-            xyz += (molecule.at(i).name + " " + str(points.at(i).x) + " " +
-                    str(points.at(i).y) + " " + str(points.at(i).z) + "\n")
+            xyz += (
+                molecule.at(i).name
+                + " "
+                + str(points.at(i).x)
+                + " "
+                + str(points.at(i).y)
+                + " "
+                + str(points.at(i).z)
+                + "\n"
+            )
 
         # Loads the geometry string into the Berny optimizer
         # object.
@@ -58,7 +65,8 @@ class GeomoptViaPyberny(pp.ModuleBase):
             lines = geom2xyz.split("\n")
             mol_string = "\n".join(lines[2:])
             xyz2chem_mol = submods["StringConv"].run_as(
-                MoleculeFromString(), mol_string)
+                MoleculeFromString(), mol_string
+            )
             geom = chemist.ChemicalSystem(xyz2chem_mol)
             geom_nuclei = geom.molecule.nuclei.as_nuclei()
             geom_points = geom_nuclei.charges.point_set.as_point_set()
@@ -66,7 +74,8 @@ class GeomoptViaPyberny(pp.ModuleBase):
             # Main optimizer operation
             energy = submods["Energy"].run_as(TotalEnergy(), geom)
             gradients = submods["Gradient"].run_as(
-                EnergyNuclearGradientStdVectorD(), geom, geom_points)
+                EnergyNuclearGradientStdVectorD(), geom, geom_points
+            )
             optimizer.send((np.array(energy).item(), gradients))
 
         opt_geom_nuclei = geom.molecule.nuclei.as_nuclei()

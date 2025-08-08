@@ -17,8 +17,8 @@
 
 import numpy as np
 import pluginplay as pp
-from simde import TotalEnergy
 import tensorwrapper as tw
+from simde import TotalEnergy
 
 
 class LennardJonesPotential(pp.ModuleBase):
@@ -31,41 +31,41 @@ class LennardJonesPotential(pp.ModuleBase):
         self.description("Lennard-Jones 1D potential function")
         self.satisfies_property_type(TotalEnergy())
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
     # Module run_ member function ---------------------------------------------
     def run_(self, inputs, submods):
         """
         Parameters
         ----------
-        inputs : Diatomic distance, 
+        inputs : Diatomic distance,
         TYPE ---> Float
-    
+
         Returns
         -------
-        E: Lennard-Jonnes 1D potential Energy, 
-        TYPE ---> Float 
+        E: Lennard-Jonnes 1D potential Energy,
+        TYPE ---> Float
         """
         pt = TotalEnergy()
-        chem_sys, = pt.unwrap_inputs(inputs)
+        (chem_sys,) = pt.unwrap_inputs(inputs)
         mol = chem_sys.molecule
         coor_0 = np.array([mol.at(0).x, mol.at(0).y, mol.at(0).z])
         coor_1 = np.array([mol.at(1).x, mol.at(1).y, mol.at(1).z])
-        #----------------------------------------------------------------------
-        assert (mol.size() == 2)  #<--- To check molcule size contains 2-atoms
-        #----------------------------------------------------------------------
+        # ----------------------------------------------------------------------
+        assert mol.size() == 2  # <--- To check molcule size contains 2-atoms
+        # ----------------------------------------------------------------------
         r = np.linalg.norm(coor_0 - coor_1)
-        #-------------- LENNARD-JONES FUNCTION --------------------------------
+        # -------------- LENNARD-JONES FUNCTION --------------------------------
         E = 4 * ((1 / r**12) - (1 / r**6))
-        #------------- ANALYTIC FORCE -----------------------------------------
-        DE_x = -24 * ((2 / r**13) - (1 / r**7))
-        FC = -DE_x
-        #----------------------------------------------------------------------
+        # ------------- ANALYTIC FORCE -----------------------------------------
+        # DE_x = -24 * ((2 / r**13) - (1 / r**7))
+        # FC = -DE_x
+        # ----------------------------------------------------------------------
         E = tw.Tensor(np.array(E))
         rv = self.results()
         return pt.wrap_results(rv, E)
 
-    #--------------------------------------------------------------------------
+    # --------------------------------------------------------------------------
 
 
 def load_lennard_jones_potential(mm):

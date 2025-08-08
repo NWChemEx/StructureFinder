@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .lj_potential.lennard_jones_potential_module import (
+    load_lennard_jones_potential,
+)
 from .pyberny import load_pyberny_modules
-from .lj_potential.lennard_jones_potential_module import load_lennard_jones_potential
 
 
 def load_modules(mm):

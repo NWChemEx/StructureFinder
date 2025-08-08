@@ -1,5 +1,5 @@
 sphinx==v7.2.6
-sphinx_rtd_theme==1.3.0
-sphinxcontrib-bibtex
-sphinx_tabs
 sphinx-autoapi
+sphinx_rtd_theme==1.3.0
+sphinx_tabs
+sphinxcontrib-bibtex
